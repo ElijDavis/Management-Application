@@ -1,6 +1,6 @@
 const projects = () => {
   return(
-    <div>Projects Home Page</div>
+    <div className="min-h-screen flex justify-center items-center">Projects Home Page</div>
   )
 }
 export default projects;

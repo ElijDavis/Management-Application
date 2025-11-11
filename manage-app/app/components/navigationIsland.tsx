@@ -2,16 +2,13 @@
 
 import Tabs from "./tabs";
 import {useState} from "react";
+import { usePathname } from "next/navigation";
 
 const NavIsland = () => {
-    const [activeTab, setActiveTab] = useState("Dashboard");
-
-    const handleTabClick = (tabName: string) => {
-        setActiveTab(tabName);
-    }
+    const pathname = usePathname();
 
   return(
-    <div className="sticky top-10 z-50 mx-auto w-[50%] rounded-lg bg-white/50 shadow-md flex justify-between *:pt-2 *:pb-2">
+    <div className={`sticky top-10 z-50 mx-auto w-[50%] rounded-lg bg-white/50 shadow-md flex justify-between *:pt-2 *:pb-2 `}>
         <Tabs name={"Dashboard"}></Tabs>
         <div className="transform scale-y-150">|</div>
         <Tabs name={"Documents"}></Tabs>

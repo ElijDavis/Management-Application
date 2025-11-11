@@ -1,6 +1,6 @@
 const partners = () => {
   return(
-    <div>Partners Home Page</div>
+    <div className="min-h-screen flex justify-center items-center">Partners Home Page</div>
   )
 }
 export default partners;
