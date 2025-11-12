@@ -1,22 +1,19 @@
 // app/ClientAuthWrapper.tsx
 "use client";
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import LoginModal from "./components/loginModal";
+import { AuthProvider, useAuth } from "./AuthContext";
+import LoginModal from "./components/modals/loginModal";
+
+function AuthGate() {
+  const { showLogin, setShowLogin } = useAuth();
+
+  return <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />;
+}
 
 export default function ClientAuthWrapper({ children }: { children: React.ReactNode }) {
-  const [showLogin, setShowLogin] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) setShowLogin(true);
-    });
-  }, []);
-
   return (
-    <>
+    <AuthProvider>
       {children}
-      <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
-    </>
+      <AuthGate />
+    </AuthProvider>
   );
 }

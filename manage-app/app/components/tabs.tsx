@@ -6,7 +6,7 @@ const Tabs = ({name}: navTabs) => {
   const isActive = pathname === `/${name.toLowerCase()}`;
 
   return(
-    <Link className={`flex justify-center h-full w-full hover:bg-gray-200 hover:text-black mx-auto rounded-md cursor-pointer ${isActive ? "bg-red-950  font-semibold" : ""}`} href={`/${name.toLowerCase()}`}>
+    <Link className={`flex justify-center h-full w-full hover:bg-gray-200 hover:text-black mx-auto rounded-md cursor-pointer ${isActive ? "bg-black/30  font-semibold" : ""}`} href={`/${name.toLowerCase()}`}>
         <h1>{name}</h1>
     </Link>
   )
