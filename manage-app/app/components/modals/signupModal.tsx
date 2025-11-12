@@ -38,13 +38,13 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }: { isOpen: boolean; on
   return(
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-        <h2 className="text-xl font-semibold mb-4">Create Account</h2>
+        <h2 className="justify-self-center text-black text-xl font-semibold mb-4">Create Account</h2>
         <input type="email" placeholder="Email" className="w-full border rounded p-2 mb-2" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="password" placeholder="Password" className="w-full border rounded p-2 mb-2" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <select className="w-full border rounded p-2 mb-4" value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="factory">Factory</option>
-          <option value="fashion_house">Fashion House</option>
-          <option value="admin">Ikeddi Admin</option>
+        <select className="w-full border rounded p-2 mb-4 *:text-black text-black" value={role} onChange={(e) => setRole(e.target.value)}>
+          <option value="factory">Executive, Manager</option>
+          <option value="fashion_house">Designer, Print, Graphic</option>
+          <option value="admin">Sales, Design, Production</option>
         </select>
         <button className="w-full bg-green-600 text-white rounded p-2 hover:bg-green-700" onClick={handleSignup}>Sign Up</button>
         <div className="my-4 text-center text-sm text-gray-500">or sign up with</div>

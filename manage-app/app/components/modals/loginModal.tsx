@@ -30,7 +30,7 @@ const loginModal = ({ isOpen, onClose, onSwitchToSignup }: {isOpen: boolean; onC
   return(
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-        <h2 className="text-xl font-semibold mb-4">Login</h2>
+        <h2 className="justify-self-center text-black text-xl font-semibold mb-4">Login</h2>
         <input type="email" placeholder="Email" className="w-full border rounded p-2 mb-2" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="password" placeholder="Password" className="w-full border rounded p-2 mb-2" value={password} onChange={(e) => setPassword(e.target.value)} />
         <button className="w-full bg-blue-600 text-white rounded p-2 hover:bg-blue-700" onClick={handleLogin}>Sign In</button>
