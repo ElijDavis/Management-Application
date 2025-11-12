@@ -25,6 +25,8 @@ const loginModal = ({ isOpen, onClose }: {isOpen: boolean; onClose: () => void})
         <input type="Email" placeholder="Email" className="w-full border rounded p-2 mb-2" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="Password" placeholder="Password" className="w-full border rounded p-2 mb-2" value={password} onChange={(e) => setPassword(e.target.value)} />
         <button className="w-full bg-blue-600 text-white rounded p-2 hover:bg-blue-700" onClick={handleLogin}>Sign In</button>
+        <button className="mt-2 w-full text-gray-600 hover:text-gray-800" onClick={onClose}>Forgot Password?</button>
+        <button className="mt-2 w-full text-gray-600 hover:text-gray-800" onClick={onClose}>Sign Up</button>
         <button className="mt-2 w-full text-gray-600 hover:text-gray-800" onClick={onClose}>Cancel</button>
       </div>
     </div>
