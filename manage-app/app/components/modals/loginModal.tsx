@@ -13,7 +13,7 @@ const loginModal = ({ isOpen, onClose, onSwitchToSignup }: {isOpen: boolean; onC
     if (error) {
       alert(error.message);
     } else {
-      alert("Logged in successfully!");
+      //alert("Logged in successfully!"); // Commented out to reduce pop-ups
       onClose();
     }
   };
