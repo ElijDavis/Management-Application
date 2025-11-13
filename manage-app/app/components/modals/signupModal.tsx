@@ -15,8 +15,9 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }: { isOpen: boolean; on
           email, 
           password, 
           options: {
-             data: { role } 
-          } 
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: { role }
+          }
         });
         if (error) {
             alert(error.message);

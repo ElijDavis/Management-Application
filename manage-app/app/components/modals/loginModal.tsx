@@ -8,7 +8,7 @@ const loginModal = ({ isOpen, onClose, onSwitchToSignup }: {isOpen: boolean; onC
 
   if (!isOpen) return null;
 
-  const handleLogin = async () => {
+  /*const handleLogin = async () => {
     const {error} = await supabase.auth.signInWithPassword({email, password});
     if (error) {
       alert(error.message);
@@ -16,7 +16,22 @@ const loginModal = ({ isOpen, onClose, onSwitchToSignup }: {isOpen: boolean; onC
       //alert("Logged in successfully!"); // Commented out to reduce pop-ups
       onClose();
     }
+  };*/
+
+  const handleLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      alert(error.message);
+    } else {
+      // Wait for session to update
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        alert("Logged in successfully!");
+        onClose();
+      }
+    }
   };
+
 
   const handleSocialLogin = async (provider: 'google' | 'github') => {
     await supabase.auth.signInWithOAuth({ 
