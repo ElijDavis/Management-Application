@@ -43,9 +43,13 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin }: { isOpen: boolean; on
         <input type="email" placeholder="Email" className="w-full border rounded p-2 mb-2 text-purple-300" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="password" placeholder="Password" className="w-full border rounded p-2 mb-2 text-purple-300" value={password} onChange={(e) => setPassword(e.target.value)} />
         <select className="w-full border rounded p-2 mb-4 *:text-black text-black" value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="factory">Executive, Manager</option>
-          <option value="fashion_house">Designer, Print, Graphic</option>
-          <option value="admin">Sales, Design, Production</option>
+          <option value="Executive">Executive</option>
+          <option value="Manger">Manager</option>
+          <option value="Graphic">Graphic</option>
+          <option value="Print">Print</option>
+          <option value="Sales">Sales</option>
+          <option value="Design">Design</option>
+          <option value="Production">Production</option>
         </select>
         <button className="w-full bg-green-600 text-white rounded p-2 hover:bg-green-700" onClick={handleSignup}>Sign Up</button>
         <div className="my-4 text-center text-sm text-gray-500">or sign up with</div>
