@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Barlow_Condensed, Geist, Geist_Mono } from "next/font/google";
-import ClientAuthWrapper from "./ClientAuthWrapper";
 import User from "./components/user";
 import Brand from "./components/brand";
 import NavigationIsland from "./components/navigationIsland";
@@ -28,10 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-black bg-zinc-50`}
-      >
-        <ClientAuthWrapper>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-black bg-zinc-50`}>
           {/* Stationary items like user profile and brand name */}
           <div className="absolute top-0 flex justify-between items-center w-full px-4 py-2">
             <Brand name={"Ikeddi"} />
@@ -39,7 +35,6 @@ export default function RootLayout({
           </div>
           <NavigationIsland />
           {children}
-        </ClientAuthWrapper>
       </body>
     </html>
   );
