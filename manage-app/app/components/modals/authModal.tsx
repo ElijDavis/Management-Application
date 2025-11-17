@@ -1,34 +1,18 @@
 //authModal.tsx
 'use client';
 
-const AuthModal = () => {
+const AuthModal = (modal: string) => {
 
-  const activeUser = true; //replace with actual auth check
-
-  if(!activeUser){
-    return(
-      <div className="">
-        <h1>Auth Modal</h1>
-        <div>
-          <input type="text" placeholder="Username" className="border p-2 m-2"/>
-          <input type="password" placeholder="Password" className="border p-2 m-2"/>
-          <button className="bg-blue-500 text-white p-2 m-2 rounded">Log In</button>
-        </div>
+  return(
+    <div className="lex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-lg">
+      <h1>{modal}</h1>
+      <div>
+        <input type="text" placeholder="Username" className="border p-2 m-2"/>
+        <input type="password" placeholder="Password" className="border p-2 m-2"/>
+        <button className="bg-blue-500 text-white p-2 m-2 rounded">{modal}</button>
       </div>
-    )
-  } else if(!activeUser){
-    return(
-      <div className="">
-        <h1>Auth Modal</h1>
-        <div>
-          <input type="text" placeholder="Username" className="border p-2 m-2"/>
-          <input type="password" placeholder="Password" className="border p-2 m-2"/>
-          <button className="bg-blue-500 text-white p-2 m-2 rounded">Sign UP</button>
-        </div>
-      </div>
-    )
-  }
-
+    </div>
+  )
 };
 
 export default AuthModal;
