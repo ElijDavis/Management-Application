@@ -2,10 +2,11 @@ type navTabs = {
   name: string;
 };
 
-type user = {
+type User = {
   email: string;
   password: string;
   phone?: number;
+  active?: boolean; //indicates if user is logged in
 };
 
 const enum AuthType {

@@ -1,7 +1,7 @@
 import { supabase } from "../../lib/supabaseClient";
 
 //Sign up new user
-const signUp = async (newUser: user) => {
+const signUp = async (newUser: User) => {
   if (newUser.email) {
     let {data, error } = await supabase.auth.signUp({
         email: newUser.email,
@@ -20,7 +20,7 @@ const signUp = async (newUser: user) => {
 }
 
 //Login existing user
-const logIn = async (existingUser: user) => {
+const logIn = async (existingUser: User) => {
   let { data, error } = await supabase.auth.signInWithPassword({
     email: existingUser.email,
     password: existingUser.password,
@@ -28,7 +28,7 @@ const logIn = async (existingUser: user) => {
     return {data, error};
 }
 
-const OTPLogIn = async (existingUser: user, type: AuthType) => {
+const OTPLogIn = async (existingUser: User, type: AuthType) => {
   if (type === AuthType.OTP_EMAIL && existingUser.email) {
     let { data, error } = await supabase.auth.signInWithOtp({
       email: existingUser.email,
