@@ -1,6 +1,17 @@
-type navTabs = {
+type NameProps = {
   name: string;
 };
+
+type ModalProps = {
+  modal: NameProps['name'];
+  auth?: Auth
+}
+
+const enum Auth {
+  OTP,
+  LogIn,
+  SignUp
+}
 
 type User = {
   email: string;

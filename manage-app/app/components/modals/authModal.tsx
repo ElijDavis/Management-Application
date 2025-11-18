@@ -1,7 +1,16 @@
-//authModal.tsx
+//components/auth/authModal.tsx
 'use client';
 
-const AuthModal = (modal: string) => {
+import { logIn, signUp, OTPLogIn } from "@/utils/auth/auth";
+
+const AuthModal = ({modal, auth}: ModalProps) => {
+
+  const handleClick = () => {
+    switch (auth){
+      case Auth.OTP:
+        return logIn
+    }
+  }
 
   return(
     <div className="lex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-lg">
@@ -9,7 +18,10 @@ const AuthModal = (modal: string) => {
       <div>
         <input type="text" placeholder="Username" className="border p-2 m-2"/>
         <input type="password" placeholder="Password" className="border p-2 m-2"/>
-        <button className="bg-blue-500 text-white p-2 m-2 rounded">{modal}</button>
+        {modal == 'signup' && (
+          <button></button>
+        )}
+        <button className="bg-blue-500 text-white p-2 m-2 rounded" onClick={handleClick}>{modal}</button>
       </div>
     </div>
   )
