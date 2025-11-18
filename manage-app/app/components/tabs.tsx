@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const Tabs = ({name}: navTabs) => {
+const Tabs = ({name}: NameProps) => {
   const pathname = usePathname();
   const isActive = pathname === `/${name.toLowerCase()}`;
 
