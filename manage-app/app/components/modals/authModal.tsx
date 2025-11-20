@@ -2,24 +2,35 @@
 
 import { useState } from 'react'
 import { logIn, signUp } from '@/utils/auth/auth'
+import Toast from '../toast'
 
 const AuthModal = ({ onClose }: { onClose: () => void }) => {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [showToast,setShowToast] = useState(false);
 
-  const handleSubmit = async () => {
-    setError(null)
-    const user = { email, password }
+const handleSubmit = async () => {
+  setError(null)
+  const user = { email, password }
 
-    const { data, error } = mode === 'login' ? await logIn(user) : await signUp(user)
-    if (error) {
-      setError(error.message)
+  const { data, error } = mode === 'login' ? await logIn(user) : await signUp(user)
+
+  if (error) {
+    setError(error.message)
+  } else {
+    if (mode === 'signup') {
+      setShowToast(true)
+      setTimeout(() => {
+        setShowToast(false)
+        onClose()
+      }, 3000) // wait for toast to show before closing modal
     } else {
       onClose()
     }
   }
+}
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={onClose}>
@@ -41,6 +52,9 @@ const AuthModal = ({ onClose }: { onClose: () => void }) => {
           {mode === 'login' ? 'Create an account' : 'Already have an account? Log in'}
         </button>
       </div>
+      {showToast && (
+        <Toast message="Confirmation email sent. Check your inbox!" onClose={() => setShowToast(false)}/>
+      )}
     </div>
   )
 }
