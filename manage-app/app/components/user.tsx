@@ -1,26 +1,14 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import AuthModal from './modals/authModal'
-import { getCurrentUser, getSession } from '@/utils/auth/auth'
-import {User as supabaseUser} from '@supabase/supabase-js'
+import { useSupabaseUser } from '../hooks/useSupabase'
+
 
 const User = () => {
-  const [user, setUser] = useState<supabaseUser | null>(null)
+  const { user, loading } = useSupabaseUser()
   const [showModal, setShowModal] = useState(false)
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const session = await getSession()
-      if (!session) return
-
-      const user = await getCurrentUser()
-      setUser(user)
-    }
-
-    fetchUser()
-  }, [])
 
   const handleClick = () => {
     if (!user) setShowModal(true)

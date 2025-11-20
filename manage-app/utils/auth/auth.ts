@@ -45,7 +45,7 @@ const OTPLogIn = async (existingUser: User, type: AuthType) => {
 }
 
 //Get current user
-const getCurrentUser = async () => {
+const getUser = async () => {
   const { data, error } = await supabase.auth.getUser()
   if (error) {
     console.error("Error fetching user: ", error)
@@ -53,6 +53,33 @@ const getCurrentUser = async () => {
   }
   return data?.user || null
 }
+
+/*const getCurrentUser = async () => {
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+  if (sessionError || !sessionData) return null; //if there is a session error or there is no session data return null
+  const { data: userData, error: userError } = await supabase.auth.getUser()
+  if (userError) {
+    console.error("Error fetching user: ", userError)
+  }
+  return userData.user;
+}*/
+
+const getCurrentUser = async () => {
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+  if (sessionError || !sessionData.session) {
+    console.warn("No session found or error:", sessionError)
+    return null
+  }
+
+  const { data: userData, error: userError } = await supabase.auth.getUser()
+  if (userError) {
+    console.error("Error fetching user:", userError)
+    return null
+  }
+
+  return userData.user
+}
+
 
 const getSession = async () => {
   const { data, error } = await supabase.auth.getSession()
