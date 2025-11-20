@@ -48,7 +48,7 @@ const handleSubmit = async () => {
           {mode === 'login' ? 'Log In' : 'Sign Up'}
         </button>
 
-        <button className="text-sm text-blue-600 mt-2 underline" onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}>
+        <button className="text-sm text-blue-600 active:bg-blue-700 active:scale-95 mt-2 underline" onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}>
           {mode === 'login' ? 'Create an account' : 'Already have an account? Log in'}
         </button>
       </div>
