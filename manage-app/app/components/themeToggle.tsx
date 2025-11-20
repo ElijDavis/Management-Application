@@ -14,9 +14,11 @@ export default function ThemeToggle() {
   }, [theme]);
 
   return (
-    <div className="flex gap-2">
+    <div className="flex justify-center w-[30%] mb-4 gap-2 text-black bg-gray-100 *:hover:bg-black/10">
       <button onClick={() => setTheme("system")}>System</button>
+      <p>|</p>
       <button onClick={() => setTheme("light")}>Light</button>
+      <p>|</p>
       <button onClick={() => setTheme("dark")}>Dark</button>
     </div>
   );
