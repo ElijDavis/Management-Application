@@ -7,8 +7,8 @@ export const useSupabaseUser = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const user = await getCurrentUser()
+    const fetchUser = async () => {//must be in a function and be called
+      const user = await getCurrentUser();
       setUser(user)
       setLoading(false)
     }
