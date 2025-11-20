@@ -46,7 +46,21 @@ const OTPLogIn = async (existingUser: User, type: AuthType) => {
 
 //Get current user
 const getCurrentUser = async () => {
-  let { data: { user } } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser()
+  if (error) {
+    console.error("Error fetching user: ", error)
+    return null
+  }
+  return data?.user || null
+}
+
+const getSession = async () => {
+  const { data, error } = await supabase.auth.getSession()
+  if (error) {
+    console.error("Error fetching user session: ", error)
+    return null
+  }
+  return data?.session || null
 }
 
 //Password recovery
@@ -84,5 +98,6 @@ export {
     recoverPassword,
     updateUser,
     logOut,
-    inviteUser
+    inviteUser,
+    getSession
 }
