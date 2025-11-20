@@ -4,6 +4,11 @@ import { logOut } from "@/utils/auth/auth"
 import ThemeToggle from "../themeToggle"
 
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
+  const handleLogOut = async () => {
+    const { error } = await logOut()
+    if(!error) onClose()
+    else console.error("Logout failed: ", error)
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={onClose}>
@@ -18,7 +23,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
         <div className="flex flex-col items-center justify-center space-y-2 *:w-[50%]">{/*logic and buttons in this div*/}
           <input type="email" placeholder="Change Email" className="rounded-full border-2 border-blue-200"/>
           <input type="password" placeholder="Change Password" className="rounded-full border-2 border-blue-200"/>
-          <button className="rounded-full text-black p-2 pl-4 pr-4 hover:bg-red-500 bg-red-600" onClick={logOut}>Log Out</button>
+          <button className="rounded-full text-black p-2 pl-4 pr-4 hover:bg-red-500 bg-red-600" onClick={handleLogOut}>Log Out</button>
         </div>
       </div>
     </div>
