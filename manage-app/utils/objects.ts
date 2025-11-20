@@ -13,11 +13,10 @@ const enum Auth {
   SignUp
 }
 
-type User = {
+type UserCredentials = {
   email: string;
   password: string;
   phone?: number;
-  active?: boolean; //indicates if user is logged in
 };
 
 const enum AuthType {

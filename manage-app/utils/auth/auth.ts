@@ -1,7 +1,8 @@
 import { supabase } from "../../lib/supabaseClient";
+import type { User } from "@supabase/supabase-js"
 
 //Sign up new user
-const signUp = async (newUser: User) => {
+const signUp = async (newUser: UserCredentials) => {
   if (newUser.email) {
     let {data, error } = await supabase.auth.signUp({
         email: newUser.email,
@@ -20,7 +21,7 @@ const signUp = async (newUser: User) => {
 }
 
 //Login existing user
-const logIn = async (existingUser: User) => {
+const logIn = async (existingUser: UserCredentials) => {
   let { data, error } = await supabase.auth.signInWithPassword({
     email: existingUser.email,
     password: existingUser.password,
@@ -29,7 +30,7 @@ const logIn = async (existingUser: User) => {
 }
 
 //determine OTP login with email or phone
-const OTPLogIn = async (existingUser: User, type: AuthType) => {
+const OTPLogIn = async (existingUser: UserCredentials, type: AuthType) => {
   if (type === AuthType.OTP_EMAIL && existingUser.email) {
     let { data, error } = await supabase.auth.signInWithOtp({
       email: existingUser.email,
@@ -46,7 +47,7 @@ const OTPLogIn = async (existingUser: User, type: AuthType) => {
 }
 
 //Get user from server
-const getUser = async () => {
+const getUser = async (): Promise<User | null> => {
   const { data, error } = await supabase.auth.getUser()
   if (error) {
     console.error("Error fetching user: ", error)
@@ -55,7 +56,7 @@ const getUser = async () => {
   return data?.user || null
 }
 
-const getCurrentUser = async () => {//Gets the current user (either in session or from server)
+const getCurrentUser = async (): Promise<User | null> => {//Gets the current user (either in session or from server)
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
   if (sessionError || !sessionData.session) {
     console.warn("No session found or error:", sessionError)
@@ -108,6 +109,16 @@ const inviteUser = async (email: string) => {
     return {data, error};
 }
 
+//
+const onAuthChange = (callback: (user: User | null) => void) => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    callback(session?.user || null)
+  })
+
+  return subscription
+}
+
+
 export {
     signUp,
     logIn,
@@ -118,5 +129,6 @@ export {
     logOut,
     inviteUser,
     getSession,
-    getUser
+    getUser,
+    onAuthChange
 }

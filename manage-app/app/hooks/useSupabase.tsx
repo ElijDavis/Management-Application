@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getCurrentUser } from '@/utils/auth/auth'
+import { getCurrentUser, onAuthChange } from '@/utils/auth/auth'
 import type { User } from '@supabase/supabase-js'
 
 export const useSupabaseUser = () => {
@@ -14,6 +14,13 @@ export const useSupabaseUser = () => {
     }
 
     fetchUser()
+
+        // 🔁 Listen for login/logout/email confirmation
+    const subscription = onAuthChange(setUser)
+
+    // 🧼 Clean up on unmount
+    return () => subscription.unsubscribe()
+
   }, [])
 
   return { user, loading }
