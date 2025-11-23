@@ -27,19 +27,19 @@ const ThemeToggle = () => {
 
   return (
     <div className="flex gap-2 p-4">
-      <button onClick={() => setTheme("light")} className="w-10 h-10 px-3 py-1 rounded-full border-foreground bg-white text-foreground">
+      <button onClick={() => setTheme("light")} className="w-10 h-10 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-white text-foreground">
         Light
       </button>
-      <button onClick={() => setTheme("dark")} className="w-10 h-10 px-3 py-1 rounded-full border-foreground bg-black text-foreground">
+      <button onClick={() => setTheme("dark")} className="w-10 h-10 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-black text-foreground">
         Dark
       </button>
-      <button onClick={() => setTheme("sepia")} className="w-10 h-10px-3 py-1 rounded-full border-forground bg-[#f4ecd8] text-foreground">
+      <button onClick={() => setTheme("sepia")} className="w-10 h-10px-3 py-1 rounded-full outline-2 outline-offset-2  border-forground bg-[#f4ecd8] text-foreground">
         Sepia
       </button>
-      <button onClick={() => setTheme("blue")} className="w-10 h-10 px-3 py-1 rounded-full border-foreground bg-[#e0f2fes] text-foreground">
+      <button onClick={() => setTheme("blue")} className="w-10 h-10 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-[#e0f2fes] text-foreground">
         Blue
       </button>
-      <button onClick={() => setTheme("system")} className="w-10 h-10 px-3 py-1 rounded-full border-foreground bg-background text-foreground">
+      <button onClick={() => setTheme("system")} className="w-10 h-10 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-background text-foreground">
         System
       </button>
     </div>
