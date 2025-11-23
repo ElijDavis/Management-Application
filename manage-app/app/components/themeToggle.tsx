@@ -6,7 +6,7 @@ const ThemeToggle = () => {
   const [theme, setTheme] = useState("system");
 
   // Apply theme to <html> or <body>
-  /*useEffect(() => {
+  useEffect(() => {
     const root = document.documentElement;
 
     if (theme === "system") {
@@ -23,30 +23,7 @@ const ThemeToggle = () => {
         root.classList.add(`theme-${theme}`);
       }
     }
-  }, [theme]);*/
-
-  useEffect(() => {
-  const root = document.documentElement;
-
-  // Clear all theme classes first
-  root.classList.remove("dark", "theme-sepia", "theme-blue");
-
-  if (theme === "system") {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (prefersDark) {
-      root.classList.add("dark");
-    }
-  } else if (theme === "dark") {
-    root.classList.add("dark");
-  } else if (theme === "light") {
-    // Light theme = just default :root values
-    // No extra class needed, but you must ensure dark class is removed
-    // (already handled above)
-  } else {
-    // Custom themes
-    root.classList.add(`theme-${theme}`);
-  }
-}, [theme]);
+  }, [theme]);
 
 
   return (
