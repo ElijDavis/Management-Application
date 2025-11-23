@@ -26,12 +26,12 @@ const ThemeToggle = () => {
   }, [theme]);
 
   return (
-    <div className="flex -gap-2 p-4">
-      <button onClick={() => setTheme("light")} className="w-10 h-10 z-2 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-white text-foreground"/>
-      <button onClick={() => setTheme("dark")} className="w-10 h-10 z-4 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-black text-foreground"/>
-      <button onClick={() => setTheme("sepia")} className="w-10 h-10 z-6 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-forground bg-[#f4ecd8] text-foreground"/>
-      <button onClick={() => setTheme("blue")} className="w-10 h-10 z-8 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-[#e0f2fe] text-foreground"/>
-      <button onClick={() => setTheme("system")} className="w-10 h-10 z-10 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-background text-foreground"/>
+    <div className="flex -gap-4 pt-4 pb-4">
+      <button onClick={() => setTheme("light")} title="Switch to Light Theme" className="w-10 h-10 z-2 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-white text-foreground"/>
+      <button onClick={() => setTheme("dark")} title="Switch to Dark Theme" className="w-10 h-10 z-4 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-black text-foreground"/>
+      <button onClick={() => setTheme("sepia")} title="Switch to Sepia Theme" className="w-10 h-10 z-6 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-forground bg-[#f4ecd8] text-foreground"/>
+      <button onClick={() => setTheme("blue")} title="Switch to Blue Theme" className="w-10 h-10 z-8 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-[#e0f2fe] text-foreground"/>
+      <button onClick={() => setTheme("system")} title="Switch to System Theme" className="w-10 h-10 z-10 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-background text-foreground"/>
     </div>
   );
 };
