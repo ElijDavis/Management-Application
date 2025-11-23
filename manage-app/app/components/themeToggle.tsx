@@ -6,7 +6,7 @@ const ThemeToggle = () => {
   const [theme, setTheme] = useState("system");
 
   // Apply theme to <html> or <body>
-  useEffect(() => {
+  /*useEffect(() => {
     const root = document.documentElement;
 
     if (theme === "system") {
@@ -23,13 +23,37 @@ const ThemeToggle = () => {
         root.classList.add(`theme-${theme}`);
       }
     }
-  }, [theme]);
+  }, [theme]);*/
+
+  useEffect(() => {
+  const root = document.documentElement;
+
+  // Clear all theme classes first
+  root.classList.remove("dark", "theme-sepia", "theme-blue");
+
+  if (theme === "system") {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (prefersDark) {
+      root.classList.add("dark");
+    }
+  } else if (theme === "dark") {
+    root.classList.add("dark");
+  } else if (theme === "light") {
+    // Light theme = just default :root values
+    // No extra class needed, but you must ensure dark class is removed
+    // (already handled above)
+  } else {
+    // Custom themes
+    root.classList.add(`theme-${theme}`);
+  }
+}, [theme]);
+
 
   return (
     <div className="flex -gap-4 pt-4 pb-4">
       <button onClick={() => setTheme("light")} title="Switch to Light Theme" className="w-10 h-10 z-2 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-white text-foreground"/>
       <button onClick={() => setTheme("dark")} title="Switch to Dark Theme" className="w-10 h-10 z-4 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-black text-foreground"/>
-      <button onClick={() => setTheme("sepia")} title="Switch to Sepia Theme" className="w-10 h-10 z-6 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-forground bg-[#f4ecd8] text-foreground"/>
+      <button onClick={() => setTheme("sepia")} title="Switch to Sepia Theme" className="w-10 h-10 z-6 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-[#f4ecd8] text-foreground"/>
       <button onClick={() => setTheme("blue")} title="Switch to Blue Theme" className="w-10 h-10 z-8 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-[#e0f2fe] text-foreground"/>
       <button onClick={() => setTheme("system")} title="Switch to System Theme" className="w-10 h-10 z-10 px-3 py-1 rounded-full outline-2 outline-offset-2 outline-foreground bg-background text-foreground"/>
     </div>

@@ -11,14 +11,14 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" onClick={onClose}>
+    <div className="fixed inset-0 flex items-center justify-center bg-background bg-opacity-50 z-50" onClick={onClose}>
       <div className="flex flex-col justify-items-center w-[50%] relative p-6 bg-white rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
         <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-800" onClick={onClose}>
           ✕
         </button>
         <div className="flex flex-col items-center">
-          <h2 className="mx-auto text-black text-xl font-bold mb-4">Account Settings</h2>
-          <h3 className="mx-auto text-black ">Themes:</h3>
+          <h2 className="mx-auto text-foreground text-xl font-bold mb-4">Account Settings</h2>
+          <h3 className="mx-auto text-foreground">Themes:</h3>
           <ThemeToggle></ThemeToggle>
         </div>
         <div className="flex flex-col items-center justify-center space-y-2 *:w-[50%]">{/*logic and buttons in this div*/}
