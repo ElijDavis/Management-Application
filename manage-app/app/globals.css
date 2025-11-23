@@ -23,15 +23,16 @@
 }
 
 /***Custom Themes to toggle ***/
-.theme-blue {
-  --background: /*Hex color value*/;
-  --foreground: /*Hex color value*/;
+.theme-sepia {
+  --background: #f4ecd8;
+  --foreground: #5b4636;
 }
 
-.theme-sepia {
-  --background: /*Hex color value*/;
-  --foreground: /*Hex color value*/;
+.theme-blue {
+  --background: #e0f2fe;
+  --foreground: #1e3a8a;
 }
+
 
 
 
