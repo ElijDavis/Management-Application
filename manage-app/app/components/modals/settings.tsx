@@ -18,6 +18,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
         </button>
         <div className="flex flex-col items-center">
           <h2 className="mx-auto text-black text-xl font-bold mb-4">Account Settings</h2>
+          <h3 className="mx-auto text-black ">Themes:</h3>
           <ThemeToggle></ThemeToggle>
         </div>
         <div className="flex flex-col items-center justify-center space-y-2 *:w-[50%]">{/*logic and buttons in this div*/}
