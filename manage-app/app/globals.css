@@ -1,17 +1,12 @@
 @import "tailwindcss";
 
+/***Root specifies light theme layout colors and styles***/
+/*Basic root layout*/
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/*Just makes whatever is inside the media query set to your predefined values for "dark"*/
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -19,6 +14,28 @@
   }
 }
 
+/***Allows you to use your custom variables as normal tailwind values (eg. bg-background) ***/
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/***Custom Themes to toggle ***/
+.theme-blue {
+  --background: /*Hex color value*/;
+  --foreground: /*Hex color value*/;
+}
+
+.theme-sepia {
+  --background: /*Hex color value*/;
+  --foreground: /*Hex color value*/;
+}
+
+
+
+/***Fallback styles for before the tailwind utilities are in place***/
 body {
   background: var(--background);
   color: var(--foreground);

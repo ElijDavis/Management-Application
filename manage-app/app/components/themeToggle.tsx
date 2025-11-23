@@ -1,25 +1,49 @@
-"use client";
-import { useEffect, useState } from "react";
+'use client'
 
-export default function ThemeToggle() {
-  const [theme, setTheme] = useState<"system" | "light" | "dark">("system");
+import React, { useEffect, useState } from "react";
 
+const ThemeToggle = () => {
+  const [theme, setTheme] = useState("system");
+
+  // Apply theme to <html> or <body>
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove("light", "dark");
 
-    if (theme === "dark") root.classList.add("dark");
-    if (theme === "light") root.classList.add("light");
-    // if "system", rely on prefers-color-scheme (your CSS already handles it)
+    if (theme === "system") {
+      // Detect system preference
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      root.classList.remove("theme-sepia", "theme-blue");
+      root.classList.toggle("dark", prefersDark);
+    } else {
+      // Remove system-based dark/light
+      root.classList.remove("dark");
+      // Apply custom theme class
+      root.classList.remove("theme-sepia", "theme-blue");
+      if (theme !== "light" && theme !== "dark") {
+        root.classList.add(`theme-${theme}`);
+      }
+    }
   }, [theme]);
 
   return (
-    <div className="flex justify-center w-[30%] mb-4 gap-2 text-black bg-gray-100 *:hover:bg-black/10">
-      <button onClick={() => setTheme("system")}>System</button>
-      <p>|</p>
-      <button onClick={() => setTheme("light")}>Light</button>
-      <p>|</p>
-      <button onClick={() => setTheme("dark")}>Dark</button>
+    <div className="flex gap-2 p-4">
+      <button onClick={() => setTheme("light")} className="px-3 py-1 rounded bg-background text-foreground">
+        Light
+      </button>
+      <button onClick={() => setTheme("dark")} className="px-3 py-1 rounded bg-background text-foreground">
+        Dark
+      </button>
+      <button onClick={() => setTheme("sepia")} className="px-3 py-1 rounded bg-background text-foreground">
+        Sepia
+      </button>
+      <button onClick={() => setTheme("blue")} className="px-3 py-1 rounded bg-background text-foreground">
+        Blue
+      </button>
+      <button onClick={() => setTheme("system")} className="px-3 py-1 rounded bg-background text-foreground">
+        System
+      </button>
     </div>
   );
-}
+};
+
+export default ThemeToggle;
