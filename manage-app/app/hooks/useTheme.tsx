@@ -31,9 +31,9 @@ export function useTheme() {
       if (prefersDark) root.classList.add("dark");
     } else if (theme === "dark") {
       root.classList.add("dark");
-    }/* else if (theme !== "light") {
+    } else {
       root.classList.add(`theme-${theme}`);
-    }*/
+    }
 
     // Persist locally
     localStorage.setItem("theme", theme);
