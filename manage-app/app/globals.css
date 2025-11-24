@@ -33,6 +33,11 @@
   --foreground: #1e3a8a;
 }
 
+.theme-light {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
 /***Fallback styles for before the tailwind utilities are in place***/
 body {
   background: var(--background);
