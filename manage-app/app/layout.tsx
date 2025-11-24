@@ -4,6 +4,7 @@ import User from "./components/user";
 import Brand from "./components/brand";
 import NavigationIsland from "./components/navigationIsland";
 import "./globals.css";
+import { ThemeProvider } from "./contexts/themeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,9 @@ export default function RootLayout({
             <User />
           </div>
           <NavigationIsland />
-          {children}
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
       </body>
     </html>
   );

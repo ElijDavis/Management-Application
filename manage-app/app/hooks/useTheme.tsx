@@ -24,7 +24,7 @@ export function useTheme() {
   // Apply theme immediately
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove("dark", "theme-sepia", "theme-blue", "theme-green");
+    root.classList.remove("dark", "theme-sepia", "theme-blue", "theme-light");
 
     if (theme === "system") {
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;

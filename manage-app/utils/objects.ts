@@ -14,6 +14,11 @@ type ToastProps = {
   duration?: number // in milliseconds
 }
 
+type ThemeContextType = {
+  theme: string;
+  setTheme: React.Dispatch<React.SetStateAction<string>>;
+};
+
 const enum AuthType {
   EMAIL,
   PHONE,
