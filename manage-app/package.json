@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@cubejs-backend/server": "^1.5.7",
+    "@cubejs-client/core": "^1.5.7",
+    "@cubejs-client/react": "^1.5.7",
     "@reduxjs/toolkit": "^2.10.1",
     "@supabase/supabase-js": "^2.81.0",
     "chart.js": "^4.5.1",
