@@ -19,6 +19,10 @@ type ThemeContextType = {
   setTheme: React.Dispatch<React.SetStateAction<string>>;
 };
 
+type Span = {
+  span: number;
+}
+
 const enum AuthType {
   EMAIL,
   PHONE,
