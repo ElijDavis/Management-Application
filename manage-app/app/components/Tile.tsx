@@ -13,7 +13,7 @@ const Tile = ({ span, shape ="square" }: TileProps) => {
     const shapeClass = shape === "square" ? "aspect-square" : ""; // or h-64 for fixed height
 
   return (
-    <div className={`bg-foreground/20 ${spanClasses[span]} ${shapeClass} rounded-xl`}>
+    <div className={`bg-foreground/20 ${spanClasses[span]} ${shapeClass} rounded-xl hover:scale-95 transition-discrete duration-500`}>
       Tile
     </div>
   );
