@@ -19,10 +19,6 @@ type ThemeContextType = {
   setTheme: React.Dispatch<React.SetStateAction<string>>;
 };
 
-type TileProps = {
-  span: 1 | 2 | 3 | 4; // restrict to valid spans
-};
-
 const enum AuthType {
   EMAIL,
   PHONE,
