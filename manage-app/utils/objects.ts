@@ -21,7 +21,6 @@ type ThemeContextType = {
 
 type TileProps = {
   span: 1 | 2 | 3 | 4; // restrict to valid spans
-  shape?: "square" | "rect"; // default square
 };
 
 const enum AuthType {

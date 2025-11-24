@@ -2,20 +2,20 @@
 
 'use client'
 
+import Link from "next/link";
+
 const spanClasses: Record<TileProps["span"], string> = {
-  1: "col-span-1",
-  2: "col-span-2",//over 5/2 (try 5/3 or 10/5)
-  3: "col-span-3",
+  1: "col-span-1 aspect-square",
+  2: "col-span-2 aspect-[51/25]",
+  3: "col-span-3 aspect-[46/15]",
   4: "col-span-4",
 };
 
-const Tile = ({ span, shape ="square" }: TileProps) => {
-    const shapeClass = shape === "square" ? "aspect-square" : ""; // or h-64 for fixed height
-
+const Tile = ({ span }: TileProps) => {
   return (
-    <div className={`bg-foreground/20 ${spanClasses[span]} ${shapeClass} rounded-xl hover:scale-95 transition-discrete duration-500`}>
+    <Link href={`/`} className={`bg-foreground/20 ${spanClasses[span]} rounded-xl hover:scale-95 transition-discrete duration-500 flex items-center justify-center`}>
       Tile
-    </div>
+    </Link>
   );
 };
 
