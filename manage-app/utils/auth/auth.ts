@@ -88,14 +88,18 @@ const recoverPassword = async (email: string) => {
     return {data, error};
 }
 
-//Update user
-const updateUser = async (updatedInfo: { email?: string; password?: string; }) => {
+// Update user (email, password, theme)
+const updateUser = async (updatedInfo: { email?: string; password?: string; theme?: string }) => {
   let { data, error } = await supabase.auth.updateUser({
     email: updatedInfo.email,
     password: updatedInfo.password,
+    // theme gets stored in user_metadata
+    data: updatedInfo.theme ? { theme: updatedInfo.theme } : undefined,
   });
-    return {data, error};
-}
+
+  return { data, error };
+};
+
 
 //logout user
 const logOut = async () => {

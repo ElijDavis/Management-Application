@@ -1,3 +1,5 @@
+//components/themetoggle
+
 'use client'
 
 import React, { useEffect, useState } from "react";
@@ -6,7 +8,7 @@ const ThemeToggle = () => {
   const [theme, setTheme] = useState("system");
 
   // Apply theme to <html> or <body>
-  useEffect(() => {
+  /*useEffect(() => {
     const root = document.documentElement;
 
     if (theme === "system") {
@@ -23,7 +25,29 @@ const ThemeToggle = () => {
         root.classList.add(`theme-${theme}`);
       }
     }
-  }, [theme]);
+  }, [theme]);*/
+
+  useEffect(() => {
+  const root = document.documentElement;
+
+  // Always clear previous theme classes
+  root.classList.remove("dark", "theme-sepia", "theme-blue");
+
+  if (theme === "system") {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (prefersDark) {
+      root.classList.add("dark");
+    }
+    // else: defaults from :root (light)
+  } else if (theme === "dark") {
+    root.classList.add("dark");
+  } else if (theme === "light") {
+    // nothing extra: defaults from :root (light)
+  } else {
+    // custom themes
+    root.classList.add(`theme-${theme}`);
+  }
+}, [theme]);
 
 
   return (

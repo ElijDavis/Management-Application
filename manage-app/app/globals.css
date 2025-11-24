@@ -33,9 +33,6 @@
   --foreground: #1e3a8a;
 }
 
-
-
-
 /***Fallback styles for before the tailwind utilities are in place***/
 body {
   background: var(--background);
