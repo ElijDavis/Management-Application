@@ -45,6 +45,7 @@ const BarChart = () => {
       chart = new Chart(canvasRef.current, {
         type: 'bar',//specify the bar type
         options: {//new options for graph manipulation
+          maintainAspectRatio: false, // allow canvas to fill parent
           animation: false,// the animation where it disapeared, set to false
           plugins: {
             legend: {//disables the legend at the top of the graph (in this instance "Aquisition by year")
@@ -79,8 +80,8 @@ const BarChart = () => {
   }, []);
 
   return (
-    <div>
-      <canvas ref={canvasRef}></canvas>
+    <div className="">{/**/}
+      <canvas className="w-full" ref={canvasRef}></canvas>
     </div>
   );
 };
