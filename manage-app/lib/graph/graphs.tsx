@@ -80,7 +80,7 @@ const BarChart = () => {
   }, []);
 
   return (
-    <div className="">{/**/}
+    <div className="w-full p-10">{/**/}
       <canvas className="w-full" ref={canvasRef}></canvas>
     </div>
   );
