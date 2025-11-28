@@ -22,7 +22,7 @@ const spanClasses: Record<TileProps["span"], string> = {
 const Tile = ({ span, children, href }: TileProps) => {
   return (
     <Link href={href} className={`relative bg-foreground/20 ${spanClasses[span]} rounded-xl hover:scale-95 transition duration-500 flex items-center justify-center`}>
-      <div className="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-black/20 text-white opacity-0 hover:opacity-100 transition duration-500">Dashboard</div>
+      <div className="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-black/10 text-2xl text-white opacity-0 hover:opacity-100 transition duration-500">Dashboard</div>
       {children}
     </Link>
   );
