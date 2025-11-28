@@ -8,7 +8,9 @@ import { Chart, Colors, BarController, LineController, PieController, CategorySc
 // ✅ Register chart types and components once
 Chart.register(Colors, BarController, LineController, PieController, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, PointElement, Legend);
 
-//Bar
+//
+// -------------------- BAR CHART --------------------
+//
 /*const BarChart = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -145,7 +147,6 @@ const BarChart = () => {
     </div>
   );
 };
-
 
 //
 // -------------------- LINE CHART --------------------
