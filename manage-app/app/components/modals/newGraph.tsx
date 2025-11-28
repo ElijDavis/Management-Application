@@ -19,7 +19,7 @@ export default function CreateChart({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/10 bg-opacity-50 z-50" onClick={onClose}>
-      <div className="bg-foreground text-background h-1/3">
+      <div className="bg-foreground text-background h-1/3" onClick={(e) => e.stopPropagation()}>
         <input value={name} onChange={e => setName(e.target.value)} placeholder="Chart name"/>
         <select value={chartType} onChange={e => setChartType(e.target.value)}>
           <option value="bar">Bar</option>
