@@ -30,7 +30,7 @@ const dashboard = () => {
         <button className="bg-foreground/20 p-2 hover:bg-foreground/50 active:bg-foreground rounded-xl" onClick={handleClick}>New</button>
         <button className="bg-foreground/20 p-2 hover:bg-foreground/50 active:bg-foreground rounded-xl" onClick={handleDelete}>Delete</button>  
       </div>
-      <div className="m-4 grid grid-cols-4 gap-4">
+      <div className="m-4 grid grid-cols-4 gap-4 grid-flow-dense">
         {Object.entries(charts).map(([name, {chartType}]) => (
           <Tile key={name} chartType={chartType} href={`/dashboard/${name}`} name={name.toUpperCase()}>
             {toDelete && <div className="absolute inset-0 z-20 top-5 left-5 aspect-square w-5 rounded-full hover:bg-white/30 active:bg-white/50 bg-white/10 outline-2 outline-offset-2 outline-black" />}
