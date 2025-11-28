@@ -20,7 +20,7 @@ const dashboard = () => {
   }, []);
 
   return(
-    <div className="flex flex-col justify-center items-center mt-5">
+    <div className="flex flex-col w-full justify-center items-center mt-5">
       <button className="bg-amber-600 mt-20 pl-4 pr-4 active:bg-amber-700 rounded-xl" onClick={handleClick}>New</button>
       <div className="mt-25 m-4 grid grid-cols-4 gap-4">
         {Object.entries(charts).map(([name, {chartType}]) => (
