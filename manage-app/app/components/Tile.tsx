@@ -16,7 +16,7 @@ type TileProps = {
 const spanClasses: Record<number, string> = {
   1: "col-span-1 aspect-square",
   2: "col-span-2 ",//aspect-[51/25]
-  3: "col-span-3 aspect-[46/15]",
+  3: "col-span-3 aspect-[46/15] md:aspect-[47/15]",
   4: "col-span-4",
 };
 
