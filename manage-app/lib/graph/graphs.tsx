@@ -88,7 +88,23 @@ const BarChart = () => {
 
 //Line/Area
 
+const LineChart = () => {
+  return (
+    <div>
+      Hello
+    </div>
+  )
+}
+
 //Pie/Doughnut
 
+const PieChart = () => {
+  return (
+    <div>
+      Hello
+    </div>
+  )
+}
 
-export {BarChart};
+
+export {BarChart, LineChart, PieChart};
