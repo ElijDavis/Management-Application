@@ -27,8 +27,8 @@ const dashboard = () => {
   return(
     <div className="w-full">
       <div className="flex justify-center mt-15 gap-2">{/* Make the New button dynamic because right now it is out of place */}
-        <button className="bg-foreground/20 p-2 hover:bg-foreground/50 active:bg-foreground rounded-xl" onClick={handleClick}>New</button>
-        <button className="bg-foreground/20 p-2 hover:bg-foreground/50 active:bg-foreground rounded-xl" onClick={handleDelete}>Delete</button>  
+        <button className="bg-foreground/50 p-2 hover:bg-foreground/50 active:bg-foreground rounded-xl" onClick={handleClick}>New</button>
+        <button className="bg-foreground/50 p-2 hover:bg-foreground/50 active:bg-foreground rounded-xl" onClick={handleDelete}>Delete</button>  
       </div>
       <div className="m-4 grid grid-cols-4 gap-4 grid-flow-dense">
         {Object.entries(charts).map(([name, {chartType}]) => (

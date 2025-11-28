@@ -21,7 +21,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
           <h3 className="mx-auto text-foreground">Themes:</h3>
           <ThemeToggle></ThemeToggle>
         </div>
-        <div className="flex flex-col items-center justify-center space-y-2 *:w-[50%]">{/*logic and buttons in this div*/}
+        <div className="flex flex-col items-center justify-center space-y-2 *:w-[25%]">{/*logic and buttons in this div*/}
           <input type="email" placeholder="Change Email" className="rounded-full border-2 border-blue-200"/>
           <input type="password" placeholder="Change Password" className="rounded-full border-2 border-blue-200"/>
           <button className="rounded-full text-black p-2 pl-4 pr-4 hover:bg-red-500 bg-red-600" onClick={handleLogOut}>Log Out</button>
