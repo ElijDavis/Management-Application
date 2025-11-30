@@ -55,3 +55,16 @@ export async function saveChart(name: string, chartType: ChartMeta["chartType"])
   // Sync to Supabase
   await supabase.from("charts").insert({ name, chartType });
 }
+
+// --- Public API ---
+export async function deleteChart(name: string) {
+  // 1. Remove from localStorage
+  const charts = getLocalCharts();
+  delete charts[name];
+  setLocalCharts(charts);
+
+  // 2. Remove from Supabase
+  const { error } = await supabase.from("charts").delete().eq("name", name);
+  if (error) throw error;
+}
+
