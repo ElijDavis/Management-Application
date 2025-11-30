@@ -8,8 +8,8 @@ const ThemeToggle = () => {
   const {theme, setTheme} = useTheme();
 
   return (
-    <div className="inline-flex -space-x-2 p-4 rounded-full mb-10 *:rounded-full border-2 border-gray-400 bg-transparent">
-      <button onClick={() => setTheme("light")} title="Switch to Light Theme" className="w-10 h-10 bg-white text-foreground"/>
+    <div className="inline-flex -space-x-2 p-2 rounded-full mb-10 *:rounded-full border-2 border-gray-400 bg-transparent">
+      <button onClick={() => setTheme("light")} title="Switch to Light Theme" className="w-10 h-10 bg-black/5 text-foreground"/>
       <button onClick={() => setTheme("dark")} title="Switch to Dark Theme" className="w-10 h-10 bg-black text-foreground"/>
       <button onClick={() => setTheme("sepia")} title="Switch to Sepia Theme" className="w-10 h-10 bg-[#f4ecd8] text-foreground"/>
       <button onClick={() => setTheme("blue")} title="Switch to Blue Theme" className="w-10 h-10 bg-[#e0f2fe] text-foreground"/>
