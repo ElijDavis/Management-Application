@@ -35,7 +35,7 @@ const dashboard = () => {
   return(
     <div className="w-full">
       <div className="flex justify-end mr-36 mt-15 gap-2">{/* Make the New button dynamic because right now it is out of place */}
-        <button className="bg-foreground/50 aspect-square p-2 text-2xl hover:bg-foreground/10 active:bg-foreground rounded-xl" onClick={handleClick}>+</button>
+        <button className="bg-foreground/50 aspect-square pl-2 pr-2 text-2xl hover:bg-foreground/10 active:bg-foreground rounded-xl" onClick={handleClick}>+</button>
       </div>
       <div className="m-4 grid grid-cols-4 gap-4 grid-flow-dense">
         {Object.entries(charts).map(([name, {chartType}]) => (
