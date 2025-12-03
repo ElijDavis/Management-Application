@@ -1,11 +1,14 @@
 // lib/chartStorage.ts
 'use client'
 
+import { ChartData } from "@/lib/data/pipeline";
 import { createClient } from "@supabase/supabase-js";
 
 export type ChartMeta = {
   chartType: "bar" | "line" | "pie" | "doughnut" | "area";
-  url: string;
+  source: string | ChartData;
+  xKey: string;
+  yKey: string;
 };
 
 const STORAGE_KEY = "graphs";
@@ -37,7 +40,7 @@ export async function getCharts(): Promise<Record<string, ChartMeta>> {
 
   const charts: Record<string, ChartMeta> = {};
   data.forEach((row: any) => {
-    charts[row.name] = { chartType: row.chartType, url: row.url };
+    charts[row.name] = { chartType: row.chartType, source: row.url ?? row.data, xKey: row.xKey, yKey: row.yKey };
   });
 
   // Cache locally
@@ -45,16 +48,25 @@ export async function getCharts(): Promise<Record<string, ChartMeta>> {
   return charts;
 }
 
-export async function saveChart(name: string, chartType: ChartMeta["chartType"], url:string) {
+export async function saveChart(name: string, chartType: ChartMeta["chartType"], sourceOrData:string | ChartData, xKey:string, yKey:string) {
   const charts = getLocalCharts();
 
   if (charts[name]) throw new Error("Chart name must be unique");
 
-  charts[name] = { chartType, url };
+  charts[name] = { chartType, source: sourceOrData, xKey, yKey };
   setLocalCharts(charts);
 
+  // new Sync to Supabase
+  if (typeof sourceOrData === "string") {
+    // URL path
+    await supabase.from("charts").insert({ name, chartType, url: sourceOrData, xKey, yKey });
+  } else {
+    // ChartData path
+    await supabase.from("charts").insert({ name, chartType, data: sourceOrData, xKey, yKey });
+  }
+
   // Sync to Supabase
-  await supabase.from("charts").insert({ name, chartType, url });
+  //await supabase.from("charts").insert({ name, chartType, data: sourceOrData, xKey, yKey });
 }
 
 // --- Public API ---

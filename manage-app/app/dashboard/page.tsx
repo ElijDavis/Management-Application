@@ -45,11 +45,11 @@ const dashboard = () => {
         </button>
       </div>
       <div className="m-4 grid grid-cols-4 gap-4 grid-flow-dense">
-        {Object.entries(charts).map(([name, {chartType, url}]) => {
+        {Object.entries(charts).map(([name, {chartType, url, xKey, yKey}]) => {
           const ChartComponent = chartMap[chartType];
           return (
           <Tile key={name} chartType={chartType} href={`/dashboard/${name}`} name={name.toUpperCase()} onDelete={() => handleDelete(name)} onEdit={() => handleEdit()}>
-            <ChartComponent source={url} xKey="year" yKey="count" datasetLabel={name} />
+            <ChartComponent source={url} xKey={xKey} yKey={yKey} datasetLabel={name} />
           </Tile>
           )
         })}

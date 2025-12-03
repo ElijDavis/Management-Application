@@ -1,3 +1,4 @@
+// lib/data/pipeline.ts
 import * as XLSX from "xlsx";
 
 // -------------------- TYPES --------------------
@@ -65,15 +66,14 @@ export function transformForChart(
 
 
 
-// lib/data/pipeline.ts
-//import * as XLSX from "xlsx";
+
 
 export interface ChartData {
   labels: string[];
   datasets: { label: string; data: number[] }[];
 }
 
-export async function loadChartData(
+/*export async function loadChartData(
   source: string,
   xKey: string,
   yKey: string,
@@ -101,4 +101,81 @@ export async function loadChartData(
       },
     ],
   };
+}*/
+
+
+export async function loadChartData(
+  source: string | ChartData,
+  xKey: string,
+  yKey: string,
+  datasetLabel: string
+): Promise<ChartData> {
+  // Case A: already parsed ChartData
+  if (typeof source !== "string") {
+    return source;
+  }
+
+  // Case B: URL string
+  let workbook: XLSX.WorkBook;
+  const response = await fetch(source);
+  const arrayBuffer = await response.arrayBuffer();
+  workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+  const sheetName = workbook.SheetNames[0];
+  const raw = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]) as RawRow[];
+
+  return transformForChart(raw, xKey, yKey, datasetLabel);
 }
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////
+//Test data with Cube.js - commented out for now
+
+/*import cubejs, { Query } from '@cubejs-client/core';
+
+const apiUrl = 'https://heavy-lansford.gcp-us-central1.cubecloudapp.dev/cubejs-api/v1';
+const cubeToken = 'your-token-here';
+
+const cubeApi = cubejs(cubeToken, { apiUrl });
+
+
+const acquisitionsByYearQuery: Query = {
+  dimensions: ['Artworks.yearAcquired'],
+  measures: ['Artworks.count'],
+  filters: [
+      {
+      member: 'Artworks.yearAcquired',
+      operator: 'set'
+      }
+  ],
+  order: {
+      'Artworks.yearAcquired': 'asc'
+  }
+};
+
+
+export async function cubeLoadChartData(
+  query: Query,
+  xKey: string,
+  yKey: string,
+  datasetLabel: string
+): Promise<ChartData> {
+  const resultSet = await cubeApi.load(query);
+
+  // Cube.js returns a ResultSet, not raw JSON rows
+  const raw = resultSet.tablePivot();
+
+  return {
+    labels: raw.map((row: any) => String(row[xKey])),
+    datasets: [
+      {
+        label: datasetLabel,
+        data: raw.map((row: any) => Number(row[yKey])),
+      },
+    ],
+  };
+}*/
