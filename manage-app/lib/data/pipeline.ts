@@ -42,7 +42,7 @@ export function validateData<T extends RawRow>(
 }
 
 // -------------------- TRANSFORMATION --------------------
-export function transformForChart(
+/*export function transformForChart(
   data: RawRow[],
   xKey: string,
   yKey: string,
@@ -72,9 +72,42 @@ export function transformForChart(
       },
     ],
   };
+}*/
+
+export function transformForChart(
+  data: RawRow[],
+  xKey: string,
+  yKeys: string[],
+  datasetLabels?: string[]
+): ChartData {
+  const normalized = data.map((row) => {
+    const clean: RawRow = {};
+    Object.keys(row).forEach((key) => {
+      clean[key.trim().toLowerCase()] = row[key];
+    });
+    return clean;
+  });
+
+  const xKeyNorm = xKey.trim().toLowerCase();
+
+  return {
+    labels: normalized.map((row) => String(row[xKeyNorm] ?? "")),
+    datasets: yKeys.map((yKey, idx) => {
+      const yKeyNorm = yKey.trim().toLowerCase();
+      return {
+        label: datasetLabels?.[idx] ?? yKey,
+        data: normalized.map((row) => {
+          const val = row[yKeyNorm];
+          return val != null && val !== "" ? Number(val) : null;
+        }),
+      };
+    }),
+  };
 }
 
+
 // -------------------- UTILITIES --------------------
+// Extract headers from workbook
 export function getHeadersFromWorkbook(workbook: XLSX.WorkBook): string[] {
   const sheetName = workbook.SheetNames[0];
   const raw = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 }) as any[][];
@@ -84,6 +117,11 @@ export function getHeadersFromWorkbook(workbook: XLSX.WorkBook): string[] {
   return headers.map((h: any) => String(h).trim());
 }
 
+// Extract headers from RawRow array - recommended
+export function getHeaders(rows: RawRow[]): string[] {
+  if (!rows || rows.length === 0) return [];
+  return Object.keys(rows[0]).map((key) => key.trim());
+}
 
 
 
@@ -99,8 +137,8 @@ export function getHeadersFromWorkbook(workbook: XLSX.WorkBook): string[] {
 export async function loadChartData(
   source: string | ChartData,
   xKey: string,
-  yKey: string,
-  datasetLabel: string
+  yKeys: string[],
+  datasetLabels?: string[]
 ): Promise<ChartData> {
   // Case A: already parsed ChartData
   if (typeof source !== "string") {
@@ -116,7 +154,7 @@ export async function loadChartData(
   const sheetName = workbook.SheetNames[0];
   const raw = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]) as RawRow[];
 
-  return transformForChart(raw, xKey, yKey, datasetLabel);
+  return transformForChart(raw, xKey, yKeys, datasetLabels);
 }
 
 
