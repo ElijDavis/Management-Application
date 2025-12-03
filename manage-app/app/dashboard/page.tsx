@@ -43,11 +43,15 @@ const dashboard = () => {
         <button className="bg-foreground/50 aspect-square pl-2 pr-2 text-2xl hover:bg-foreground/10 active:bg-foreground rounded-xl" onClick={handleClick}>+</button>
       </div>
       <div className="m-4 grid grid-cols-4 gap-4 grid-flow-dense">
-        {Object.entries(charts).map(([name, {chartType}]) => (
+        {Object.entries(charts).map(([name, {chartType, url}]) => {
+          const ChartComponent = chartMap[chartType];
+          return (
           <Tile key={name} chartType={chartType} href={`/dashboard/${name}`} name={name.toUpperCase()} onDelete={() => handleDelete(name)} onEdit={() => handleEdit()}>
-            {chartMap[chartType]({ source: url, xKey: "year", yKey: "count", datasetLabel: name })}
+            {/*{chartMap[chartType]({ source: url, xKey: "year", yKey: "count", datasetLabel: name })}*/}
+            <ChartComponent source={url} xKey="year" yKey="count" datasetLabel={name} />
           </Tile>
-        ))}
+          )
+        })}
       </div>
       {showCreateChart && <CreateChart onClose={() => setShowCreateChart(false)} />}
     </div>

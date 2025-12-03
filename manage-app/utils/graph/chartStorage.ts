@@ -54,7 +54,7 @@ export async function saveChart(name: string, chartType: ChartMeta["chartType"],
   setLocalCharts(charts);
 
   // Sync to Supabase
-  await supabase.from("charts").insert({ name, chartType });
+  await supabase.from("charts").insert({ name, chartType, url });
 }
 
 // --- Public API ---
