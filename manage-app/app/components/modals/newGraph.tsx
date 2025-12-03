@@ -82,7 +82,8 @@ export default function CreateChart({ onClose }: { onClose: () => void }) {
             )}
             {/* ✅ Dropdown for yKey */}
             {headers.length > 0 && (
-              <select multiple value={yKeys} onChange={(e) => setYKeys(Array.from(e.target.selectedOptions, (opt) => opt.value))}>
+              <select value={yKeys} onChange={(e) => setYKeys(Array.from(e.target.selectedOptions, (opt) => opt.value))}>
+                <option value="">Select Y Axis</option>
                 {headers.map((h) => (
                   <option key={h} value={h}>{h}</option>
                 ))}
