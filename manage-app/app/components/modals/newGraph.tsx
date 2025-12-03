@@ -3,15 +3,18 @@
 
 import { useState } from "react";
 import { saveChart } from "@/utils/graph/chartStorage";
+import Toast from "../toast";
 
 export default function CreateChart({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState("");
   const [chartType, setChartType] = useState("bar");
+  const [showToast, setShowToast] = useState(false);
 
   const handleSubmit = () => {
     try {
       saveChart(name, chartType as any);
-      alert("Chart saved!");
+      //alert("Chart saved!");
+      setShowToast(true);
     } catch (err) {
       alert((err as Error).message);
     }
@@ -33,6 +36,7 @@ export default function CreateChart({ onClose }: { onClose: () => void }) {
           <button className="bg-foreground/20 outline-offset-2 outline-green-400 outline-2 rounded-lg active:bg-green-400" onClick={handleSubmit}>Save Chart</button>
         </div>
       </div>
+      {showToast && <Toast message="Chart created & saved successfully!" onClose={() => setShowToast(false)} />}
     </div>
   );
 }

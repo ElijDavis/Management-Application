@@ -1,12 +1,23 @@
 //lib/graph/graphs.tsx
 import { useEffect, useRef } from "react";
 //import Chart from "chart.js/auto";
-import { getAquisitionsByYear } from '../../lib/sampleData/sample'
+import { getAquisitionsByYear } from '../../lib/sampleData/sample';
+import { loadChartData } from "../data/pipeline";
 //starting tree-shaking
 // ✅ Import only what you need (tree-shaking)
 import { Chart, Colors, BarController, LineController, PieController, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, Legend, PointElement, } from "chart.js";
+import { Bar } from "react-chartjs-2";
 // ✅ Register chart types and components once
 Chart.register(Colors, BarController, LineController, PieController, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, PointElement, Legend);
+
+interface ChartProps {
+  source: string;       // URL or local file path
+  xKey: string;         // column name for x-axis
+  yKey: string;         // column name for y-axis
+  datasetLabel: string; // label for dataset
+}
+
+type RowShape = Record<string, unknown>; // or define a stricter interface per dataset
 
 //
 // -------------------- BAR CHART --------------------
@@ -91,7 +102,7 @@ Chart.register(Colors, BarController, LineController, PieController, CategorySca
   );
 };*/
 
-const BarChart = () => {
+const BarChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
 
@@ -99,12 +110,14 @@ const BarChart = () => {
     const loadData = async () => {
       if (!canvasRef.current) return;
 
-      const data = await getAquisitionsByYear();
+      //const data = await getAquisitionsByYear();
+      const data = await loadChartData(source, xKey, yKey, datasetLabel);
 
       if (chartRef.current) {
         // ✅ update existing chart instead of creating a new one
-        chartRef.current.data.labels = data.map((row) => row.year);
-        chartRef.current.data.datasets[0].data = data.map((row) => row.count);
+        /*chartRef.current.data.labels = data.map((row) => row.year);
+        chartRef.current.data.datasets[0].data = data.map((row) => row.count);*/
+        chartRef.current.data = data;
         chartRef.current.update();
       } else {
         // ✅ only create chart if none exists
@@ -118,7 +131,7 @@ const BarChart = () => {
               tooltip: { enabled: false },
             },
           },
-          data: {
+          data: /*{
             labels: data.map((row) => row.year),
             datasets: [
               {
@@ -126,7 +139,7 @@ const BarChart = () => {
                 data: data.map((row) => row.count),
               },
             ],
-          },
+          },*/ data,
         });
       }
     };
@@ -151,7 +164,7 @@ const BarChart = () => {
 //
 // -------------------- LINE CHART --------------------
 //
-const LineChart = () => {
+/*const LineChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
 
@@ -195,7 +208,7 @@ const LineChart = () => {
 
     loadData();
 
-    return () => {
+    return ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
       if (chartRef.current) {
         chartRef.current.destroy();
         chartRef.current = null;
@@ -274,7 +287,9 @@ const PieChart = () => {
       <canvas className="w-full h-64" ref={canvasRef}></canvas>
     </div>
   );
-};
+};*/
 
 
-export {BarChart, LineChart, PieChart};
+//export {BarChart, LineChart, PieChart};
+
+export {BarChart};

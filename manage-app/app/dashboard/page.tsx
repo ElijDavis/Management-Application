@@ -6,6 +6,7 @@ import { getCharts, deleteChart } from "@/utils/graph/chartStorage";
 import Tile from "../components/Tile";
 import { chartMap } from "@/utils/graph/chartMap";
 import CreateChart from "../components/modals/newGraph";
+import Toast from "../components/toast";
 
 const dashboard = () => {
   const [charts, setCharts] = useState<Record<string, any>>({});
@@ -28,6 +29,10 @@ const dashboard = () => {
     }
   };
 
+  const handleEdit = () => {
+    alert("Edit functionality coming soon!");
+  };
+
   useEffect(() => {
     getCharts().then(setCharts).catch(console.error);
   }, []);
@@ -39,7 +44,7 @@ const dashboard = () => {
       </div>
       <div className="m-4 grid grid-cols-4 gap-4 grid-flow-dense">
         {Object.entries(charts).map(([name, {chartType}]) => (
-          <Tile key={name} chartType={chartType} href={`/dashboard/${name}`} name={name.toUpperCase()} onDelete={() => handleDelete(name)}>
+          <Tile key={name} chartType={chartType} href={`/dashboard/${name}`} name={name.toUpperCase()} onDelete={() => handleDelete(name)} onEdit={() => handleEdit()}>
             {chartMap[chartType]}
           </Tile>
         ))}
