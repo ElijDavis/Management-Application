@@ -64,26 +64,31 @@ export default function CreateChart({ onClose }: { onClose: () => void }) {
         <h1 className="text-background text-2xl mb-20">Create New Chart</h1>
         <div className="mb-10 flex flex-col items-center">
           <div className="flex flex-col space-y-2 mb-5">
-            <input type="file" accept=".xlsx,.xls" onChange={(e) => setFile(e.target.files?.[0] || null)}/>
+            <input type="file" accept=".xlsx,.xls" onChange={handleFileUpload}/>
             <div className="flex space-x-2">
               <input value={name} onChange={e => setName(e.target.value)} placeholder="Chart name" className="outline-offset-2 outline-2 outline-background rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 required:border-red-500" required/>
               <input value={url} onChange={e => setUrl(e.target.value)} placeholder="Chart URL" className="outline-offset-2 outline-2 outline-background rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 required:border-red-500"/>
             </div>
-            <div className="flex space-x-2">
-              <input value={xKey} onChange={e => setXKey(e.target.value)} placeholder="xKey" className="outline-offset-2 outline-2 outline-background rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 required:border-red-500" required/>
-            </div>
           </div>
-          <select
-            multiple
-            value={yKeys}
-            onChange={(e) =>
-              setYKeys(Array.from(e.target.selectedOptions, (opt) => opt.value))
-            }
-          >
-            {headers.map((h) => (
-              <option key={h} value={h}>{h}</option>
-            ))}
-          </select>
+          <div className="flex space-x-2 mb-5">
+            {/* ✅ Dropdown for xKey */}
+            {headers.length > 0 && (
+              <select value={xKey} onChange={(e) => setXKey(e.target.value)}>
+                <option value="">Select X Axis</option>
+                {headers.map((h) => (
+                  <option key={h} value={h}>{h}</option>
+                ))}
+              </select>
+            )}
+            {/* ✅ Dropdown for yKey */}
+            {headers.length > 0 && (
+              <select multiple value={yKeys} onChange={(e) => setYKeys(Array.from(e.target.selectedOptions, (opt) => opt.value))}>
+                {headers.map((h) => (
+                  <option key={h} value={h}>{h}</option>
+                ))}
+              </select>
+            )}
+          </div>
           <select value={chartType} onChange={e => setChartType(e.target.value)} className="outline-offset-2 justify-self-center w-1/2 outline-2 outline-background rounded-md">
             <option value="bar">Bar</option>
             <option value="line">Line</option>

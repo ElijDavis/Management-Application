@@ -1,20 +1,17 @@
 //lib/graph/graphs.tsx
 import { useEffect, useRef } from "react";
-//import Chart from "chart.js/auto";
-//import { getAquisitionsByYear } from '../../lib/sampleData/sample';
 import { loadChartData } from "../data/pipeline";
 //starting tree-shaking
 // ✅ Import only what you need (tree-shaking)
 import { Chart, Colors, BarController, LineController, PieController, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, Legend, PointElement, } from "chart.js";
-import { Bar } from "react-chartjs-2";
 // ✅ Register chart types and components once
 Chart.register(Colors, BarController, LineController, PieController, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, PointElement, Legend);
 
 interface ChartProps {
   source: string;       // URL or local file path
   xKey: string;         // column name for x-axis
-  yKey: string;         // column name for y-axis
-  datasetLabel: string; // label for dataset
+  yKeys: string[];         // column name for y-axis
+  datasetLabels: string[]; // label for dataset
 }
 
 type RowShape = Record<string, unknown>; // or define a stricter interface per dataset
@@ -23,21 +20,17 @@ type RowShape = Record<string, unknown>; // or define a stricter interface per d
 // -------------------- BAR CHART --------------------
 //
 
-const BarChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
+const BarChart = ({ source, xKey, yKeys, datasetLabels }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
       if (!canvasRef.current) return;
-
-      //const data = await getAquisitionsByYear();
-      const data = await loadChartData(source, xKey, yKey, datasetLabel);
+      const data = await loadChartData(source, xKey, yKeys, datasetLabels);
 
       if (chartRef.current) {
         // ✅ update existing chart instead of creating a new one
-        /*chartRef.current.data.labels = data.map((row) => row.year);
-        chartRef.current.data.datasets[0].data = data.map((row) => row.count);*/
         chartRef.current.data = data;
         chartRef.current.update();
       } else {
@@ -52,15 +45,7 @@ const BarChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
               tooltip: { enabled: false },
             },
           },
-          data: /*{
-            labels: data.map((row) => row.year),
-            datasets: [
-              {
-                label: "Acquisitions by year",
-                data: data.map((row) => row.count),
-              },
-            ],
-          },*/ data,
+          data: data,
         });
       }
     };
@@ -85,21 +70,17 @@ const BarChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
 //
 // -------------------- LINE CHART --------------------
 //
-const LineChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
+const LineChart = ({ source, xKey, yKeys, datasetLabels }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
       if (!canvasRef.current) return;
-
-      //const data = await getAquisitionsByYear();
-      const data = await loadChartData(source, xKey, yKey, datasetLabel);
+      const data = await loadChartData(source, xKey, yKeys, datasetLabels);
 
       if (chartRef.current) {
         // ✅ Update existing chart
-        /*chartRef.current.data.labels = data.map((row) => row.year);
-        chartRef.current.data.datasets[0].data = data.map((row) => row.count);*/
         chartRef.current.data = data;
         chartRef.current.update();
       } else {
@@ -112,19 +93,7 @@ const LineChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
               legend: { display: true }, // show legend for line chart
             },
           },
-          data: /*{
-            labels: data.map((row) => row.year),
-            datasets: [
-              {
-                label: "Acquisitions trend",
-                data: data.map((row) => row.count),
-                fill: true, // ✅ makes it an area chart if desired
-                borderColor: "rgba(75,192,192,1)",
-                backgroundColor: "rgba(75,192,192,0.2)",
-                tension: 0.3, // ✅ smooth curves
-              },
-            ],
-          },*/ data,
+          data: data,
         });
       }
     };
@@ -149,21 +118,17 @@ const LineChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
 //
 // -------------------- PIE CHART --------------------
 //
-const PieChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
+const PieChart = ({ source, xKey, yKeys, datasetLabels }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
       if (!canvasRef.current) return;
-
-      //const data = await getAquisitionsByYear();
-      const data = await loadChartData(source, xKey, yKey, datasetLabel);
+      const data = await loadChartData(source, xKey, yKeys, datasetLabels);
 
       if (chartRef.current) {
         // ✅ Update existing chart
-        /*chartRef.current.data.labels = data.map((row) => row.year);
-        chartRef.current.data.datasets[0].data = data.map((row) => row.count);*/
         chartRef.current.data = data;
         chartRef.current.update();
       } else {
@@ -176,23 +141,7 @@ const PieChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
               legend: { display: true }, // ✅ legend is useful for pie
             },
           },
-          data: /*{
-            labels: data.map((row) => row.year),
-            datasets: [
-              {
-                label: "Acquisitions distribution",
-                data: data.map((row) => row.count),
-                backgroundColor: [
-                  "#FF6384",
-                  "#36A2EB",
-                  "#FFCE56",
-                  "#4BC0C0",
-                  "#9966FF",
-                  "#FF9F40",
-                ], // ✅ distinct colors for slices
-              },
-            ],
-          },*/data,
+          data: data,
         });
       }
     };
@@ -213,7 +162,6 @@ const PieChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
     </div>
   );
 };
-
 
 export {BarChart, LineChart, PieChart};
 
