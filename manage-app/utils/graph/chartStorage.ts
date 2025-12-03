@@ -5,6 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 
 export type ChartMeta = {
   chartType: "bar" | "line" | "pie" | "doughnut" | "area";
+  url: string;
 };
 
 const STORAGE_KEY = "graphs";
@@ -36,7 +37,7 @@ export async function getCharts(): Promise<Record<string, ChartMeta>> {
 
   const charts: Record<string, ChartMeta> = {};
   data.forEach((row: any) => {
-    charts[row.name] = { chartType: row.chartType };
+    charts[row.name] = { chartType: row.chartType, url: row.url };
   });
 
   // Cache locally
@@ -44,12 +45,12 @@ export async function getCharts(): Promise<Record<string, ChartMeta>> {
   return charts;
 }
 
-export async function saveChart(name: string, chartType: ChartMeta["chartType"]) {
+export async function saveChart(name: string, chartType: ChartMeta["chartType"], url:string) {
   const charts = getLocalCharts();
 
   if (charts[name]) throw new Error("Chart name must be unique");
 
-  charts[name] = { chartType };
+  charts[name] = { chartType, url };
   setLocalCharts(charts);
 
   // Sync to Supabase

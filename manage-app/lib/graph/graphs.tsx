@@ -1,7 +1,7 @@
 //lib/graph/graphs.tsx
 import { useEffect, useRef } from "react";
 //import Chart from "chart.js/auto";
-import { getAquisitionsByYear } from '../../lib/sampleData/sample';
+//import { getAquisitionsByYear } from '../../lib/sampleData/sample';
 import { loadChartData } from "../data/pipeline";
 //starting tree-shaking
 // ✅ Import only what you need (tree-shaking)
@@ -164,7 +164,7 @@ const BarChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
 //
 // -------------------- LINE CHART --------------------
 //
-/*const LineChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
+const LineChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
 
@@ -172,12 +172,14 @@ const BarChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
     const loadData = async () => {
       if (!canvasRef.current) return;
 
-      const data = await getAquisitionsByYear();
+      //const data = await getAquisitionsByYear();
+      const data = await loadChartData(source, xKey, yKey, datasetLabel);
 
       if (chartRef.current) {
         // ✅ Update existing chart
-        chartRef.current.data.labels = data.map((row) => row.year);
-        chartRef.current.data.datasets[0].data = data.map((row) => row.count);
+        /*chartRef.current.data.labels = data.map((row) => row.year);
+        chartRef.current.data.datasets[0].data = data.map((row) => row.count);*/
+        chartRef.current.data = data;
         chartRef.current.update();
       } else {
         chartRef.current = new Chart(canvasRef.current, {
@@ -189,7 +191,7 @@ const BarChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
               legend: { display: true }, // show legend for line chart
             },
           },
-          data: {
+          data: /*{
             labels: data.map((row) => row.year),
             datasets: [
               {
@@ -201,73 +203,7 @@ const BarChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
                 tension: 0.3, // ✅ smooth curves
               },
             ],
-          },
-        });
-      }
-    };
-
-    loadData();
-
-    return ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-        chartRef.current = null;
-      }
-    };
-  }, []);
-
-  return (
-    <div className="w-full p-10">
-      <canvas className="w-full h-64" ref={canvasRef}></canvas>
-    </div>
-  );
-};
-
-//
-// -------------------- PIE CHART --------------------
-//
-const PieChart = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const chartRef = useRef<Chart | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      if (!canvasRef.current) return;
-
-      const data = await getAquisitionsByYear();
-
-      if (chartRef.current) {
-        // ✅ Update existing chart
-        chartRef.current.data.labels = data.map((row) => row.year);
-        chartRef.current.data.datasets[0].data = data.map((row) => row.count);
-        chartRef.current.update();
-      } else {
-        chartRef.current = new Chart(canvasRef.current, {
-          type: "pie", // ✅ Pie chart type
-          options: {
-            maintainAspectRatio: false,
-            animation: false,
-            plugins: {
-              legend: { display: true }, // ✅ legend is useful for pie
-            },
-          },
-          data: {
-            labels: data.map((row) => row.year),
-            datasets: [
-              {
-                label: "Acquisitions distribution",
-                data: data.map((row) => row.count),
-                backgroundColor: [
-                  "#FF6384",
-                  "#36A2EB",
-                  "#FFCE56",
-                  "#4BC0C0",
-                  "#9966FF",
-                  "#FF9F40",
-                ], // ✅ distinct colors for slices
-              },
-            ],
-          },
+          },*/ data,
         });
       }
     };
@@ -287,9 +223,75 @@ const PieChart = () => {
       <canvas className="w-full h-64" ref={canvasRef}></canvas>
     </div>
   );
-};*/
+};
+
+//
+// -------------------- PIE CHART --------------------
+//
+const PieChart = ({ source, xKey, yKey, datasetLabel }: ChartProps) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const chartRef = useRef<Chart | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!canvasRef.current) return;
+
+      //const data = await getAquisitionsByYear();
+      const data = await loadChartData(source, xKey, yKey, datasetLabel);
+
+      if (chartRef.current) {
+        // ✅ Update existing chart
+        /*chartRef.current.data.labels = data.map((row) => row.year);
+        chartRef.current.data.datasets[0].data = data.map((row) => row.count);*/
+        chartRef.current.data = data;
+        chartRef.current.update();
+      } else {
+        chartRef.current = new Chart(canvasRef.current, {
+          type: "pie", // ✅ Pie chart type
+          options: {
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: {
+              legend: { display: true }, // ✅ legend is useful for pie
+            },
+          },
+          data: /*{
+            labels: data.map((row) => row.year),
+            datasets: [
+              {
+                label: "Acquisitions distribution",
+                data: data.map((row) => row.count),
+                backgroundColor: [
+                  "#FF6384",
+                  "#36A2EB",
+                  "#FFCE56",
+                  "#4BC0C0",
+                  "#9966FF",
+                  "#FF9F40",
+                ], // ✅ distinct colors for slices
+              },
+            ],
+          },*/data,
+        });
+      }
+    };
+
+    loadData();
+
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+        chartRef.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <div className="w-full p-10">
+      <canvas className="w-full h-64" ref={canvasRef}></canvas>
+    </div>
+  );
+};
 
 
-//export {BarChart, LineChart, PieChart};
-
-export {BarChart};
+export {BarChart, LineChart, PieChart};

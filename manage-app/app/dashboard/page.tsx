@@ -45,7 +45,7 @@ const dashboard = () => {
       <div className="m-4 grid grid-cols-4 gap-4 grid-flow-dense">
         {Object.entries(charts).map(([name, {chartType}]) => (
           <Tile key={name} chartType={chartType} href={`/dashboard/${name}`} name={name.toUpperCase()} onDelete={() => handleDelete(name)} onEdit={() => handleEdit()}>
-            {chartMap[chartType]}
+            {chartMap[chartType]({ source: url, xKey: "year", yKey: "count", datasetLabel: name })}
           </Tile>
         ))}
       </div>
