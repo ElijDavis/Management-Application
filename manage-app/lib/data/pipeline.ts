@@ -7,9 +7,10 @@ export interface RawRow {
 }
 
 export interface ChartData {
-  labels: string[];
-  datasets: { label: string; data: number[] }[];
+  labels: (string | null)[];
+  datasets: { label: string; data: (number | null)[] }[];
 }
+
 
 // -------------------- INGESTION --------------------
 // Unified function: handles local file paths OR remote URLs
@@ -47,15 +48,40 @@ export function transformForChart(
   yKey: string,
   datasetLabel: string
 ): ChartData {
+  
+  const normalized = data.map((row) => {
+    const clean: RawRow = {};
+    Object.keys(row).forEach((key) => {
+      clean[key.trim().toLowerCase()] = row[key];
+    });
+    return clean;
+  });
+
+  const xKeyNorm = xKey.trim().toLowerCase();
+  const yKeyNorm = yKey.trim().toLowerCase();
+
   return {
-    labels: data.map((row) => String(row[xKey])),
+    labels: normalized.map((row) => String(row[xKeyNorm] ?? "")),
     datasets: [
       {
         label: datasetLabel,
-        data: data.map((row) => Number(row[yKey])),
+        data: normalized.map((row) => {
+          const val = row[yKeyNorm];
+          return val != null && val !== "" ? Number(val) : null;
+        }),
       },
     ],
   };
+}
+
+// -------------------- UTILITIES --------------------
+export function getHeadersFromWorkbook(workbook: XLSX.WorkBook): string[] {
+  const sheetName = workbook.SheetNames[0];
+  const raw = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 }) as any[][];
+
+  // First row contains headers
+  const headers = raw[0] || [];
+  return headers.map((h: any) => String(h).trim());
 }
 
 
@@ -68,42 +94,8 @@ export function transformForChart(
 
 
 
-export interface ChartData {
-  labels: string[];
-  datasets: { label: string; data: number[] }[];
-}
-
-/*export async function loadChartData(
-  source: string,
-  xKey: string,
-  yKey: string,
-  datasetLabel: string
-): Promise<ChartData> {
-  let workbook: XLSX.WorkBook;
-
-  if (source.startsWith("http://") || source.startsWith("https://")) {
-    const response = await fetch(source);
-    const arrayBuffer = await response.arrayBuffer();
-    workbook = XLSX.read(arrayBuffer, { type: "array" });
-  } else {
-    workbook = XLSX.readFile(source);
-  }
-
-  const sheetName = workbook.SheetNames[0];
-  const raw = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-
-  return {
-    labels: raw.map((row: any) => String(row[xKey])),
-    datasets: [
-      {
-        label: datasetLabel,
-        data: raw.map((row: any) => Number(row[yKey])),
-      },
-    ],
-  };
-}*/
-
-
+// -------------------- LOADING --------------------
+// Unified function: handles both URL strings and already parsed ChartData
 export async function loadChartData(
   source: string | ChartData,
   xKey: string,
