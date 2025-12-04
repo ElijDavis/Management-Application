@@ -26,7 +26,16 @@ export default function CreateChart({ onClose }: { onClose: () => void }) {
     const workbook = XLSX.read(data, {type: "array"});// Read workbook from file
     const sheetName = workbook.SheetNames[0];// Get first sheet name
     const raw = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]) as any[];// Parse sheet to JSON
-    setHeaders(getHeaders(raw));// Extract and set headers for user selection
+    
+    const allHeaders = getHeaders(raw);// Extract headers from parsed data
+    
+    const firstRow = raw[0];// Get first row for logging
+    const numericHeaders = allHeaders.filter(h => {
+      const val = firstRow[h];
+      return typeof val === "number";
+    })
+    setHeaders(numericHeaders);// Extract and set headers for user selection
+    console.log("Numeric headers only: ", numericHeaders);// Log headers for debugging
   }
 
   const handleSubmit = async () => {
@@ -48,9 +57,9 @@ export default function CreateChart({ onClose }: { onClose: () => void }) {
         // Save URL reference (parsed later when loading)
         chartData = await loadChartData(url, xKey, yKeys, yKeys);
       }
-
+      
       // Save chart (local + Supabase)
-      await saveChart(name, chartType as any, chartData, xKey, yKeys.join(","));
+      await saveChart(name, chartType as any, chartData, xKey, yKeys);
 
       setShowToast(true);
     } catch (err) {
@@ -73,7 +82,7 @@ export default function CreateChart({ onClose }: { onClose: () => void }) {
           <div className="flex space-x-2 mb-5">
             {/* ✅ Dropdown for xKey */}
             {headers.length > 0 && (
-              <select value={xKey} onChange={(e) => setXKey(e.target.value)}>
+              <select value={xKey} onChange={(e) => setXKey(e.target.value)} className="bg-background text-foreground">
                 <option value="">Select X Axis</option>
                 {headers.map((h) => (
                   <option key={h} value={h}>{h}</option>
@@ -82,7 +91,7 @@ export default function CreateChart({ onClose }: { onClose: () => void }) {
             )}
             {/* ✅ Dropdown for yKey */}
             {headers.length > 0 && (
-              <select value={yKeys} onChange={(e) => setYKeys(Array.from(e.target.selectedOptions, (opt) => opt.value))}>
+              <select multiple value={yKeys} onChange={(e) => setYKeys(Array.from(e.target.selectedOptions, (opt) => opt.value))} className="bg-background text-foreground">
                 <option value="">Select Y Axis</option>
                 {headers.map((h) => (
                   <option key={h} value={h}>{h}</option>

@@ -42,38 +42,6 @@ export function validateData<T extends RawRow>(
 }
 
 // -------------------- TRANSFORMATION --------------------
-/*export function transformForChart(
-  data: RawRow[],
-  xKey: string,
-  yKey: string,
-  datasetLabel: string
-): ChartData {
-  
-  const normalized = data.map((row) => {
-    const clean: RawRow = {};
-    Object.keys(row).forEach((key) => {
-      clean[key.trim().toLowerCase()] = row[key];
-    });
-    return clean;
-  });
-
-  const xKeyNorm = xKey.trim().toLowerCase();
-  const yKeyNorm = yKey.trim().toLowerCase();
-
-  return {
-    labels: normalized.map((row) => String(row[xKeyNorm] ?? "")),
-    datasets: [
-      {
-        label: datasetLabel,
-        data: normalized.map((row) => {
-          const val = row[yKeyNorm];
-          return val != null && val !== "" ? Number(val) : null;
-        }),
-      },
-    ],
-  };
-}*/
-
 export function transformForChart(
   data: RawRow[],
   xKey: string,
@@ -87,15 +55,22 @@ export function transformForChart(
     });
     return clean;
   });
+  //logging for debugging
+  console.log("First normalized row:", normalized[0]);
+  console.log("All normalized keys:", Object.keys(normalized[0]));
+  console.log("xKey passed in:", xKey, "→ normalized:", xKey.trim().toLowerCase());
+  console.log("yKeys passed in:", yKeys);
 
   const xKeyNorm = xKey.trim().toLowerCase();
+  const yKeysNorm = yKeys.map((y) => y.trim().toLowerCase());
+  console.log("yKeys normalized:", yKeysNorm);
 
   return {
     labels: normalized.map((row) => String(row[xKeyNorm] ?? "")),
-    datasets: yKeys.map((yKey, idx) => {
-      const yKeyNorm = yKey.trim().toLowerCase();
+    datasets: yKeysNorm.map((yKeyNorm, idx) => {
+      console.log("Building dataset for:", yKeyNorm, "label:", datasetLabels?.[idx] ?? yKeys[idx]);
       return {
-        label: datasetLabels?.[idx] ?? yKey,
+        label: datasetLabels?.[idx] ?? yKeys[idx],
         data: normalized.map((row) => {
           const val = row[yKeyNorm];
           return val != null && val !== "" ? Number(val) : null;
