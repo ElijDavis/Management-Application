@@ -55,20 +55,13 @@ export function transformForChart(
     });
     return clean;
   });
-  //logging for debugging
-  console.log("First normalized row:", normalized[0]);
-  console.log("All normalized keys:", Object.keys(normalized[0]));
-  console.log("xKey passed in:", xKey, "→ normalized:", xKey.trim().toLowerCase());
-  console.log("yKeys passed in:", yKeys);
 
   const xKeyNorm = xKey.trim().toLowerCase();
   const yKeysNorm = yKeys.map((y) => y.trim().toLowerCase());
-  console.log("yKeys normalized:", yKeysNorm);
 
   return {
     labels: normalized.map((row) => String(row[xKeyNorm] ?? "")),
     datasets: yKeysNorm.map((yKeyNorm, idx) => {
-      console.log("Building dataset for:", yKeyNorm, "label:", datasetLabels?.[idx] ?? yKeys[idx]);
       return {
         label: datasetLabels?.[idx] ?? yKeys[idx],
         data: normalized.map((row) => {
