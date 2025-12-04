@@ -59,18 +59,37 @@ export function transformForChart(
   const xKeyNorm = xKey.trim().toLowerCase();
   const yKeysNorm = yKeys.map((y) => y.trim().toLowerCase());
 
-  return {
-    labels: normalized.map((row) => String(row[xKeyNorm] ?? "")),
-    datasets: yKeysNorm.map((yKeyNorm, idx) => {
-      return {
-        label: datasetLabels?.[idx] ?? yKeys[idx],
-        data: normalized.map((row) => {
-          const val = row[yKeyNorm];
-          return val != null && val !== "" ? Number(val) : null;
-        }),
-      };
-    }),
-  };
+  const labels = normalized.map((row) => {
+    const val = row[xKeyNorm];
+    //If Date.parse works -> normalize to YYY-MM-DD, else return as string
+    const asStr = typeof val === "string" ? val : String(val ?? "")
+    const maybe = Date.parse(asStr);
+    return !isNaN(maybe) ? normalizeDateLabel(asStr) : asStr;
+  });
+
+  const datasets = yKeysNorm.map((yKeyNorm, idx) => ({
+    label: datasetLabels?.[idx] ?? yKeys[idx],
+    data: normalized.map((row) => {
+      const val = row[yKeyNorm];
+      return val != null && val !== "" && !isNaN(Number(val)) ? Number(val) : null;
+  })}))
+
+  return { labels, datasets};
+}
+
+// Normalize date labels to ISO format (YYYY-MM-DD)
+function normalizeDateLabel(val: any): string {
+  if (val == null) return "";
+  // Accept numbers (Excel date serials) and strings
+  let d: Date;
+  if (typeof val === "number") {
+    // Excel serial date handling could be added if needed; for now treat as timestamp days → fallback
+    d = new Date(val);
+  } else {
+    const parsed = Date.parse(String(val));
+    d = isNaN(parsed) ? new Date(String(val)) : new Date(parsed);
+  }
+  return isNaN(d.getTime()) ? String(val) : d.toISOString().split("T")[0];
 }
 
 

@@ -4,13 +4,19 @@
 import {useEffect, useState } from "react";
 import { getCharts, deleteChart } from "@/utils/graph/chartStorage";
 import Tile from "../components/Tile";
-import { chartMap } from "@/utils/graph/chartMap";
+import { ChartRenderer } from "@/lib/graph/graphs";
 import CreateChart from "../components/modals/newGraph";
+import EditGraph from "../components/modals/editGraph";
 import Image from "next/image";
 
 const dashboard = () => {
   const [charts, setCharts] = useState<Record<string, any>>({});
   const [showCreateChart, setShowCreateChart] = useState(false);
+  const [showEditChart, setShowEditChart] = useState(false);
+  //Track which chart is being edited
+  const [selectedChartName, setSelectedChartName] = useState<string>("");
+  const [selectedChartMeta, setSelectedChartMeta] = useState<any | null>(null);
+
 
   const handleClick = () => {
     setShowCreateChart(true);
@@ -29,9 +35,13 @@ const dashboard = () => {
     }
   };
 
-  const handleEdit = () => {
-    alert("Edit functionality coming soon!");
+  const handleEdit = (name: string, chartMeta: any) => {
+    //alert("Edit functionality coming soon!");
+    setSelectedChartName(name);
+    setSelectedChartMeta(chartMeta);
+    setShowEditChart(true);
   };
+
 
   useEffect(() => {
     getCharts().then(setCharts).catch(console.error);
@@ -45,16 +55,17 @@ const dashboard = () => {
         </button>
       </div>
       <div className="m-4 grid grid-cols-4 gap-4 grid-flow-dense">
-        {Object.entries(charts).map(([name, {chartType, url, xKey, yKey}]) => {
-          const ChartComponent = chartMap[chartType];
+        {Object.entries(charts).map(([name, chartMeta]) => {
+          const {chartType, source, xKey, yKeys, options} = chartMeta;
           return (
-          <Tile key={name} chartType={chartType} href={`/dashboard/${name}`} name={name.toUpperCase()} onDelete={() => handleDelete(name)} onEdit={() => handleEdit()}>
-            <ChartComponent source={url} xKey={xKey} yKey={yKey} datasetLabel={name} />
+          <Tile key={name} chartType={chartType} href={`/dashboard/${name}`} name={name.toUpperCase()} onDelete={() => handleDelete(name)} onEdit={() => handleEdit(name, chartMeta)}>
+            <ChartRenderer chartType={chartType} source={source} xKey={xKey} yKeys={Array.isArray(yKeys) ? yKeys : [yKeys]} datasetLabels={Array.isArray(yKeys) ? yKeys : [yKeys]} options={options} />
           </Tile>
           )
         })}
       </div>
       {showCreateChart && <CreateChart onClose={() => setShowCreateChart(false)} />}
+      {showEditChart && <EditGraph name={selectedChartName} chartMeta={selectedChartMeta} onClose={() => setShowEditChart(false)} />}
     </div>
   )
 }

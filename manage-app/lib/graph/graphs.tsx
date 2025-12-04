@@ -1,64 +1,120 @@
-//lib/graph/graphs.tsx
+// lib/graph/ChartRenderer.tsx
 import { useEffect, useRef } from "react";
-import { loadChartData } from "../data/pipeline";
-//starting tree-shaking
-// ✅ Import only what you need (tree-shaking)
-import { Chart, Colors, BarController, LineController, PieController, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, Legend, PointElement, } from "chart.js";
-// ✅ Register chart types and components once
-Chart.register(Colors, BarController, LineController, PieController, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, PointElement, Legend);
+import { loadChartData, ChartData } from "../data/pipeline";
+import { Chart, Colors, CategoryScale, LinearScale, BarController, LineController, PieController, BarElement, LineElement, ArcElement, PointElement, Legend } from "chart.js";
+import { ChartDisplayOptions } from "@/utils/graph/chartStorage";
 
-interface ChartProps {
-  source: string;       // URL or local file path
-  xKey: string;         // column name for x-axis
-  yKeys: string[];         // column name for y-axis
-  datasetLabels: string[]; // label for dataset
+// Register Chart.js components once
+Chart.register(
+  Colors,
+  CategoryScale,
+  LinearScale,
+  BarController,
+  LineController,
+  PieController,
+  BarElement,
+  LineElement,
+  ArcElement,
+  PointElement,
+  Legend
+);
+
+interface ChartRendererProps {
+  chartType: "bar" | "line" | "pie";
+  source: string | ChartData;
+  xKey: string;
+  yKeys: string[];
+  datasetLabels: string[];
+  options?: ChartDisplayOptions;
 }
 
-type RowShape = Record<string, unknown>; // or define a stricter interface per dataset
+// Helpers you already wrote
+const applyOptions = (data: ChartData, options?: ChartDisplayOptions): ChartData => {
+  if (!options) return data;
+  const total = data.labels.length;
+  let start = Math.max(0, options.visibleRange?.start ?? 0);
+  let end = options.visibleRange?.end ?? Number.MAX_SAFE_INTEGER;
+  if (end < 0) {
+    const fraction = Math.max(0.0, Math.min(1.0, Math.abs(end)));
+    end = Math.floor(start + fraction * (total - start));
+  } else {
+    end = Math.min(end, total);
+  }
+  const slice = (arr: any[]) => arr.slice(start, end);
+  const sliced: ChartData = {
+    labels: slice(data.labels),
+    datasets: data.datasets.map((ds, i) => ({
+      ...ds,
+      data: slice(ds.data),
+      backgroundColor: options.colors?.[i],
+      borderColor: options.colors?.[i],
+    })),
+  };
+  return sliced;
+};
 
-//
-// -------------------- BAR CHART --------------------
-//
+const makeChartJsOptions = (type: "bar" | "line" | "pie", options?: ChartDisplayOptions) => {
+  const base = {
+    maintainAspectRatio: false,
+    animation: false,
+    plugins: {
+      legend: { display: options?.showLegend ?? type !== "bar" },
+      tooltip: { enabled: true },
+    },
+  } as any;
 
-const BarChart = ({ source, xKey, yKeys, datasetLabels }: ChartProps) => {
+  if (type === "pie") return base;
+
+  base.scales = {
+    x: {
+      title: {
+        display: !!options?.xAxisTitle,
+        text: options?.xAxisTitle,
+      },
+    },
+    y: {
+      title: {
+        display: !!options?.yAxisTitle,
+        text: options?.yAxisTitle,
+      },
+    },
+  };
+  return base;
+};
+
+export const ChartRenderer = ({ chartType, source, xKey, yKeys, datasetLabels, options }: ChartRendererProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
       if (!canvasRef.current) return;
-      const data = await loadChartData(source, xKey, yKeys, datasetLabels);
+      const rawData = typeof source === "string"
+        ? await loadChartData(source, xKey, yKeys, datasetLabels)
+        : source;
+
+      const prepared = applyOptions(rawData, options);
+      const chartOptions = makeChartJsOptions(chartType, options);
 
       if (chartRef.current) {
-        // ✅ update existing chart instead of creating a new one
-        chartRef.current.data = data;
+        chartRef.current.data = prepared;
+        chartRef.current.options = chartOptions;
         chartRef.current.update();
       } else {
-        // ✅ only create chart if none exists
         chartRef.current = new Chart(canvasRef.current, {
-          type: "bar",
-          options: {
-            maintainAspectRatio: false,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { enabled: false },
-            },
-          },
-          data: data,
+          type: chartType,
+          data: prepared,
+          options: chartOptions,
         });
       }
     };
 
     loadData();
-
     return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-        chartRef.current = null;
-      }
+      chartRef.current?.destroy();
+      chartRef.current = null;
     };
-  }, []);
+  }, [chartType, source, xKey, yKeys, datasetLabels, options]);
 
   return (
     <div className="w-full p-10">
@@ -66,182 +122,3 @@ const BarChart = ({ source, xKey, yKeys, datasetLabels }: ChartProps) => {
     </div>
   );
 };
-
-//
-// -------------------- LINE CHART --------------------
-//
-const LineChart = ({ source, xKey, yKeys, datasetLabels }: ChartProps) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const chartRef = useRef<Chart | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      if (!canvasRef.current) return;
-      const data = await loadChartData(source, xKey, yKeys, datasetLabels);
-
-      if (chartRef.current) {
-        // ✅ Update existing chart
-        chartRef.current.data = data;
-        chartRef.current.update();
-      } else {
-        chartRef.current = new Chart(canvasRef.current, {
-          type: "line", // ✅ Line chart type
-          options: {
-            maintainAspectRatio: false,
-            animation: false,
-            plugins: {
-              legend: { display: true }, // show legend for line chart
-            },
-          },
-          data: data,
-        });
-      }
-    };
-
-    loadData();
-
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-        chartRef.current = null;
-      }
-    };
-  }, []);
-
-  return (
-    <div className="w-full p-10">
-      <canvas className="w-full h-64" ref={canvasRef}></canvas>
-    </div>
-  );
-};
-
-//
-// -------------------- PIE CHART --------------------
-//
-const PieChart = ({ source, xKey, yKeys, datasetLabels }: ChartProps) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const chartRef = useRef<Chart | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      if (!canvasRef.current) return;
-      const data = await loadChartData(source, xKey, yKeys, datasetLabels);
-
-      if (chartRef.current) {
-        // ✅ Update existing chart
-        chartRef.current.data = data;
-        chartRef.current.update();
-      } else {
-        chartRef.current = new Chart(canvasRef.current, {
-          type: "pie", // ✅ Pie chart type
-          options: {
-            maintainAspectRatio: false,
-            animation: false,
-            plugins: {
-              legend: { display: true }, // ✅ legend is useful for pie
-            },
-          },
-          data: data,
-        });
-      }
-    };
-
-    loadData();
-
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-        chartRef.current = null;
-      }
-    };
-  }, []);
-
-  return (
-    <div className="w-full p-10">
-      <canvas className="w-full h-64" ref={canvasRef}></canvas>
-    </div>
-  );
-};
-
-export {BarChart, LineChart, PieChart};
-
-//Old implementations
-/*const BarChart = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {//only runs on mount, not when other renders occur
-    let chart: any = null;
-
-    const loadData = async () => {//getting real world data
-      if (!canvasRef.current) return;
-
-      //const data = [//sample data
-        //{ year: 2010, count: 10 },
-        //{ year: 2011, count: 20 },
-        //{ year: 2012, count: 15 },
-        //{ year: 2013, count: 25 },
-        //{ year: 2014, count: 22 },
-        //{ year: 2015, count: 30 },
-        //{ year: 2016, count: 28 },
-      //];
-
-      const data = await getAquisitionsByYear();
-
-
-      //**** The below script is the original example, no options
-      //const chart = new Chart(canvasRef.current, {
-        //type: "bar",//specify the bar type
-        //data: {//to be given to the graph
-          //labels: data.map((row) => row.year), //labels to be displayed on x-axis
-          //datasets: [//can have multiple datasets for more than one bar per x-label
-            //{
-              //label: "Acquisitions by year",//graph label
-              //data: data.map((row) => row.count),//data to be mapped
-            //},
-          //],
-        //},
-      //});
-
-      chart = new Chart(canvasRef.current, {
-        type: 'bar',//specify the bar type
-        options: {//new options for graph manipulation
-          maintainAspectRatio: false, // allow canvas to fill parent
-          animation: false,// the animation where it disapeared, set to false
-          plugins: {
-            legend: {//disables the legend at the top of the graph (in this instance "Aquisition by year")
-              display: false
-            },
-            tooltip: {//still don't know what it does
-              enabled: false
-            }
-          }
-        },
-        data: {//to be given to the graph
-          labels: data.map(row => row.year),//labels to be displayed on x-axis
-          datasets: [//can have multiple datasets for more than one bar per x-label
-            {
-              label: 'Acquisitions by year',//graph label
-              data: data.map(row => row.count)//data to be mapped
-            }
-          ]
-        }
-      }
-    );
-    };
-
-    loadData();
-
-    // cleanup to avoid duplicate chart instances
-    return () => {
-      if (chart) {
-        chart.destroy();
-      }
-    };
-  }, []);
-
-  return (
-    <div className="w-full p-10">
-      <canvas className="w-full" ref={canvasRef}></canvas>
-    </div>
-  );
-};*/
