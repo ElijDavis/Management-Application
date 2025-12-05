@@ -1,7 +1,19 @@
-// lib/graph/ChartRenderer.tsx
 import { useEffect, useRef } from "react";
 import { loadChartData, ChartData } from "../data/pipeline";
-import { Chart, Colors, CategoryScale, LinearScale, BarController, LineController, PieController, BarElement, LineElement, ArcElement, PointElement, Legend } from "chart.js";
+import {
+  Chart,
+  Colors,
+  CategoryScale,
+  LinearScale,
+  BarController,
+  LineController,
+  PieController,
+  BarElement,
+  LineElement,
+  ArcElement,
+  PointElement,
+  Legend
+} from "chart.js";
 import { ChartDisplayOptions } from "@/utils/graph/chartStorage";
 
 // Register Chart.js components once
@@ -28,7 +40,7 @@ interface ChartRendererProps {
   options?: ChartDisplayOptions;
 }
 
-// Helpers you already wrote
+// Apply options including colors keyed by dataset label
 const applyOptions = (data: ChartData, options?: ChartDisplayOptions): ChartData => {
   if (!options) return data;
   const total = data.labels.length;
@@ -43,12 +55,15 @@ const applyOptions = (data: ChartData, options?: ChartDisplayOptions): ChartData
   const slice = (arr: any[]) => arr.slice(start, end);
   const sliced: ChartData = {
     labels: slice(data.labels),
-    datasets: data.datasets.map((ds, i) => ({
-      ...ds,
-      data: slice(ds.data),
-      backgroundColor: options.colors?.[i],
-      borderColor: options.colors?.[i],
-    })),
+    datasets: data.datasets.map((ds) => {
+      const color = options.colors?.[ds.label] || "#3b82f6";
+      return {
+        ...ds,
+        data: slice(ds.data),
+        backgroundColor: color,
+        borderColor: color,
+      };
+    }),
   };
   return sliced;
 };
