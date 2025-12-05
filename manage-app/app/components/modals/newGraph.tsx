@@ -7,6 +7,20 @@ import * as XLSX from "xlsx";
 import Toast from "../toast";
 import { ChartData, RawRow, transformForChart, loadChartData, getHeaders } from "@/lib/data/pipeline";
 
+function validateChartName(name: string): string | null {
+  if (!name || !name.trim()) {
+    return "Chart name cannot be blank.";
+  }
+  if (/^[^a-zA-Z0-9]/.test(name)) {
+    return "Chart name must start with a letter or number.";
+  }
+  if (/['"]/.test(name)) {
+    return "Chart name cannot contain quotes or apostrophes.";
+  }
+  return null; // valid
+}
+
+
 export default function CreateChart({ onClose, onChartSaved }: { onClose: () => void; onChartSaved: (chartMeta: any) => void }) {
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
@@ -67,6 +81,13 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
 
   const handleSubmit = async () => {
     try {
+      // Validate name
+      const error = validateChartName(name);
+      if (error) {
+        alert(error);
+        return;
+      }
+
       if (!file && !url) throw new Error("Please provide either a file or a URL");
 
       let chartData: ChartData;
