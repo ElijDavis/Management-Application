@@ -33,12 +33,15 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
   //options states
   const [xAxisTitle, setXAxisTitle] = useState("");
   const [yAxisTitle, setYAxisTitle] = useState("");
-  const [colors, setColors] = useState<string[]>([]); // align with yKeys length
+  //const [colors, setColors] = useState<string[]>([]); // align with yKeys length
+  const [colors, setColors] = useState<Record<string, string>>({}); // keyed by header name
   const [rangeStart, setRangeStart] = useState(0);
   const [rangeEnd, setRangeEnd] = useState<number | null>(null);
   const [showLegend, setShowLegend] = useState(true);
 
-  useEffect(() => {
+  const chartTypeOptions = ["bar", "line", "pie", "doughnut", "area"];
+
+  /*useEffect(() => {
     setColors(prev => {
       const next = [...prev];
       if (yKeys.length > next.length) {
@@ -49,7 +52,7 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
       }
       return next;
     });
-  }, [yKeys]);
+  }, [yKeys]);*/
 
   function isDateValue(val: any): boolean {
     if (typeof val !== "string") return false;
@@ -126,6 +129,95 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
       alert((err as Error).message);
     }
   };
+
+  return (
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/30 z-50" onClick={onClose}>
+      <div className="bg-foreground rounded-lg flex flex-col justify-center items-center text-background w-2/3 h-2/3" onClick={(e) => e.stopPropagation()}>
+        <h1 className="text-background text-2xl mb-10">Create New Chart</h1>
+
+        {/* File + Name + URL + Chart Type */}
+        <div className="flex flex-row items-center space-x-2 mb-5">
+          <input type="file" accept=".xlsx,.xls" onChange={handleFileUpload} className="bg-background/20 rounded-lg pl-2" />
+          <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Chart Name" className="bg-background/20 rounded-lg pl-2" />
+          <input type="text" value={url} onChange={e => setUrl(e.target.value)} placeholder="Paste URL" className="bg-background/20 rounded-lg pl-2" />
+          <select value={chartType} onChange={e => setChartType(e.target.value)} className="bg-background/20 rounded-lg pl-2">
+            {chartTypeOptions.map(type => (
+              <option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* X and Y key selection */}
+        <div className="flex flex-col md:flex-row md:space-x-10 w-full mt-5 pl-10 pr-10 pb-5 pt-5">
+          {/* X key */}
+          <div className="flex flex-wrap gap-2 bg-background/10 p-2 rounded-lg w-full md:w-1/2 min-h-[4rem] max-h-[12rem] overflow-y-auto">
+            {headers.length > 0 ? headers.map(h => (
+              <div key={h} className="flex items-center gap-2">
+                <button
+                  className={`w-fit h-fit rounded-lg px-3 py-1 ${xKey === h ? "bg-blue-400" : "bg-background/20 hover:bg-background/40 active:bg-background/60"}`}
+                  onClick={() => setXKey(h)}
+                >
+                  {h}
+                </button>
+                {xKey === h && (
+                  <input
+                    type="color"
+                    value={colors[h] || "#3b82f6"}
+                    onChange={e => setColors({ ...colors, [h]: e.target.value })}
+                  />
+                )}
+              </div>
+            )) : <span className="text-sm text-gray-400">No items available</span>}
+          </div>
+
+          {/* Y keys */}
+          <div className="flex flex-wrap gap-2 bg-background/10 p-2 rounded-lg w-full md:w-1/2 min-h-[4rem] max-h-[12rem] overflow-y-auto">
+            {headers.length > 0 ? headers.map(h => (
+              <div key={h} className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={yKeys.includes(h)}
+                    onChange={(e) => {
+                      if (e.target.checked) setYKeys([...yKeys, h]);
+                      else setYKeys(yKeys.filter(key => key !== h));
+                    }}
+                  />
+                  {h}
+                </label>
+                {yKeys.includes(h) && (
+                  <input
+                    type="color"
+                    value={colors[h] || "#3b82f6"}
+                    onChange={e => setColors({ ...colors, [h]: e.target.value })}
+                  />
+                )}
+              </div>
+            )) : <span className="text-sm text-gray-400">No items available</span>}
+          </div>
+        </div>
+
+        {/* Axis titles */}
+        <div className="flex flex-row space-x-10 w-full pl-10 pr-10 pb-5">
+          <input type="text" value={xAxisTitle} onChange={e => setXAxisTitle(e.target.value)} placeholder="X-Axis Title (Optional)" className="w-1/2 p-2 bg-background/10 rounded-lg" />
+          <input type="text" value={yAxisTitle} onChange={e => setYAxisTitle(e.target.value)} placeholder="Y-Axis Title (Optional)" className="w-1/2 p-2 bg-background/10 rounded-lg" />
+        </div>
+
+        {/* Legend toggle */}
+        <label className="flex items-center gap-2 mt-5">
+          <input type="checkbox" checked={showLegend} onChange={e => setShowLegend(e.target.checked)} />
+          <span>Show legend</span>
+        </label>
+
+        {/* Save */}
+        <button className="bg-foreground/20 mt-10 px-2 rounded-lg hover:bg-green-400 active:bg-green-600" onClick={handleSubmit}>
+          Save Chart
+        </button>
+      </div>
+      {showToast && <Toast message="Chart created & saved successfully!" onClose={() => setShowToast(false)} />}
+    </div>
+  );
+
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50" onClick={onClose}>
@@ -215,6 +307,74 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
         <div>
           <button className="bg-foreground/20 pl-1 pr-1 outline-offset-2 outline-green-400 outline-2 rounded-lg hover:bg-green-400 active:bg-green-600" onClick={handleSubmit}>Save Chart</button>
         </div>
+      </div>
+      {showToast && <Toast message="Chart created & saved successfully!" onClose={() => setShowToast(false)} />}
+    </div>
+  );
+
+  return (
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50" onClick={onClose}>
+      <div className="bg-foreground rounded-lg flex flex-col justify-center items-center text-background w-2/3 h-2/3" onClick={(e) => e.stopPropagation()}>
+        <h1 className="text-background text-2xl mb-10">Create New Chart</h1>
+
+        {/* File upload and chart type selection section */}
+        <div className="rounded-lg flex flex-row items-center space-x-2 *:drop-shadow-lg *drop-shadow-black/90">
+          <input type="file" accept=".xlsx,.xls" onChange={handleFileUpload} className="bg-background/20 rounded-lg flex flex-row items-center pl-2" />
+          <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Chart Name" className="text-center placeholder-center bg-background/20 rounded-lg flex items-center pl-2 focus:shadow-inner shadow-background/30 outline-none"/>
+          <input type="text" value={url} onChange={e => setUrl(e.target.value)} placeholder="Paste URL" className="text-center placeholder-center bg-background/20 rounded-lg flex items-center pl-2 focus:shadow-inner shadow-background/30 outline-none"/>
+          <select className="bg-background/20 rounded-lg flex items-center w-3/2 pl-2 pr-2 outline-none">
+            <option value="">Chart Type</option>
+            {chartTypeOptions.map((type) => (
+              <option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* X Key, Y Keys selection section */}
+        <div className="flex flex-col md:flex-row md:space-x-10 w-full mt-5 pl-10 pr-10 pb-5 pt-5">
+          {/* X key selection (single) */}
+          <div className="flex flex-wrap gap-2 shadow-inner shadow-background/30 bg-background/10 p-2 rounded-lg w-full md:w-1/2 min-h-[4rem] max-h-[12rem] overflow-y-auto">
+            {headers.length > 0 ? 
+              (headers.map(h => (
+                <button key={h} className="w-fit h-fit bg-background/20 rounded-lg flex items-center justify-center px-3 py-1 hover:bg-background/40 active:bg-background/60" onClick={() => setXKey(h)}>
+                  {h}
+                </button>
+              ))
+            ) : (
+              <span className="text-sm text-gray-400">No items available</span>
+            )}
+          </div>
+
+          {/* Y keys selection (multiple) */}
+          <div className="flex flex-wrap gap-2 shadow-inner shadow-background/30 bg-background/10 p-2 rounded-lg w-full md:w-1/2 min-h-[4rem] max-h-[12rem] overflow-y-auto">
+            {headers.length > 0 ? 
+              (headers.map(h => (
+                <input type="checkbox" checked={yKeys.includes(h)} key={h} className="w-fit h-fit bg-background/20 rounded-lg flex items-center justify-center px-3 py-1 hover:bg-background/40 active:bg-background/60" onChange={(e) => {
+                    if (e.target.checked) {
+                      setYKeys([...yKeys, h]);
+                    } else {
+                      setYKeys(yKeys.filter(key => key !== h));
+                    }
+                }}>
+                  {h}
+                </input>
+              ))
+            ) : (
+              <span className="text-sm text-gray-400">No items available</span>
+            )}
+          </div>
+        </div>
+        {/* Optional Title X-Axis Y-Axis title */}
+        <div className="flex flex-row space-x-10 w-full pl-10 pr-10 pb-5 *:w-1/2 *:p-2 *:bg-background/10 *:rounded-lg *:shadow-inner *:shadow-background/30 *:outline-none">
+          <input type="text" value="" placeholder="X-Axis Title (Optional)" className=""></input>
+          <input type="text" value="" placeholder="Y-Axis Title (Optional)" className=""></input>
+        </div>
+        {/* Legend toggle */}
+        <label className="flex items-center gap-2">
+          <input type="checkbox" checked={showLegend} onChange={e => setShowLegend(e.target.checked)} />
+          <span>Show legend</span>
+        </label>
+        <button className="bg-foreground/20 mt-10 pl-1 pr-1 outline-offset-2 outline-green-400 outline-2 rounded-lg hover:bg-green-400 active:bg-green-600" onClick={handleSubmit}>Save Chart</button>
       </div>
       {showToast && <Toast message="Chart created & saved successfully!" onClose={() => setShowToast(false)} />}
     </div>

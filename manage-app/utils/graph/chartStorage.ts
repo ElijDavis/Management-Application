@@ -7,7 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 export type ChartDisplayOptions = {
   xAxisTitle?: string;
   yAxisTitle?: string;
-  colors?: string[];          // one per yKey
+  colors?: Record<string, string>;   // ✅ new          // one per yKey
   visibleRange?: { start: number; end: number }; // indices [start, end)
   showLegend?: boolean;
 };
