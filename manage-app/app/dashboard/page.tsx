@@ -64,7 +64,7 @@ const dashboard = () => {
           )
         })}
       </div>
-      {showCreateChart && <CreateChart onClose={() => setShowCreateChart(false)} />}
+      {showCreateChart && <CreateChart onChartSaved={(newChart) => { setCharts(prev => ({ ...prev, [newChart.name]: newChart }));}} onClose={() => setShowCreateChart(false)} />}
       {showEditChart && <EditGraph name={selectedChartName} chartMeta={selectedChartMeta} onClose={() => setShowEditChart(false)} />}
     </div>
   )

@@ -31,7 +31,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-black bg-zinc-50`}>
           {/* Stationary items like user profile and brand name */}
           <div className="absolute top-0 flex justify-between items-center w-full px-4 py-2">
-            <Brand name={"Ikeddi"} />
+            <Brand name={"Oscen"} />
             <User />
           </div>
           <NavigationIsland />

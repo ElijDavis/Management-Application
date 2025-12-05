@@ -7,7 +7,7 @@ import * as XLSX from "xlsx";
 import Toast from "../toast";
 import { ChartData, RawRow, transformForChart, loadChartData, getHeaders } from "@/lib/data/pipeline";
 
-export default function CreateChart({ onClose }: { onClose: () => void }) {
+export default function CreateChart({ onClose, onChartSaved }: { onClose: () => void; onChartSaved: (chartMeta: any) => void }) {
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [xKey, setXKey] = useState("");
@@ -97,6 +97,8 @@ export default function CreateChart({ onClose }: { onClose: () => void }) {
       };
       // Save chart (local + Supabase)
       await saveChart(name, chartType as any, chartData, xKey, yKeys, options);
+      onChartSaved({ name, chartType, source: file ? chartData : url, xKey, yKeys, options });
+
 
       setShowToast(true);
     } catch (err) {
