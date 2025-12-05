@@ -136,12 +136,14 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
         <h1 className="text-background text-2xl mb-10">Create New Chart</h1>
 
         {/* File + Name + URL + Chart Type */}
-        <div className="flex flex-row items-center justify-center w-full">
-          <div className="flex flex-col space-y-2 w-1/2 pl-10 pr-10 pb-5">
+        <div className="flex flex-row items-center justify-center w-full pl-10 pr-10">
+          {/* Name and URL inputs */}
+          <div className="flex flex-col space-y-2 w-1/2 mr-5">
             <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Chart Name" className="bg-background/20 rounded-lg pl-2" />
             <input type="text" value={url} onChange={e => setUrl(e.target.value)} placeholder="Paste URL" className="bg-background/20 rounded-lg pl-2" />
-            </div>
-          <div className="flex flex-col space-y-2 w-1/2 pl-10 pr-10 pb-5">
+          </div>
+          {/* File upload and Chart type selection */}
+          <div className="flex flex-col space-y-2 w-1/2 ml-5">
             <input type="file" accept=".xlsx,.xls" onChange={handleFileUpload} className="bg-background/20 rounded-lg pl-2" />
             <select value={chartType} onChange={e => setChartType(e.target.value)} className="bg-background/20 rounded-lg pl-2">
               {chartTypeOptions.map(type => (
@@ -157,10 +159,7 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
           <div className="flex flex-wrap gap-2 bg-background/10 p-2 rounded-lg w-full md:w-1/2 min-h-[4rem] max-h-[12rem] overflow-y-auto">
             {headers.length > 0 ? headers.map(h => (
               <div key={h} className="flex items-center gap-2">
-                <button
-                  className={`w-fit h-fit rounded-lg px-3 py-1 ${xKey === h ? "bg-blue-400" : "bg-background/20 hover:bg-background/40 active:bg-background/60"}`}
-                  onClick={() => setXKey(h)}
-                >
+                <button className={`w-fit h-fit rounded-lg px-3 py-1 ${xKey === h ? "bg-blue-400" : "bg-background/20 hover:bg-background/40 active:bg-background/60"}`} onClick={() => setXKey(h)}>
                   {h}
                 </button>
               </div>
@@ -172,10 +171,7 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
             {headers.length > 0 ? headers.map(h => (
               <div key={h} className="flex items-center gap-2">
                 <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={yKeys.includes(h)}
-                    onChange={(e) => {
+                  <input type="checkbox" checked={yKeys.includes(h)} onChange={(e) => {
                       if (e.target.checked) setYKeys([...yKeys, h]);
                       else setYKeys(yKeys.filter(key => key !== h));
                     }}
@@ -183,11 +179,7 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
                   {h}
                 </label>
                 {yKeys.includes(h) && (
-                  <input
-                    type="color"
-                    value={colors[h] || "#3b82f6"}
-                    onChange={e => setColors({ ...colors, [h]: e.target.value })}
-                  />
+                  <input type="color" value={colors[h] || "#3b82f6"} onChange={e => setColors({ ...colors, [h]: e.target.value })}/>
                 )}
               </div>
             )) : <span className="text-sm text-gray-400">No items available</span>}
@@ -207,7 +199,7 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
         </label>
 
         {/* Save */}
-        <button className="bg-foreground/20 mt-10 px-2 rounded-lg hover:bg-green-400 active:bg-green-600" onClick={handleSubmit}>
+        <button className="bg-foreground/20 mt-10 px-2 outline-2 outline-offset-2 outline-green-400 rounded-lg hover:bg-green-400 active:bg-green-600" onClick={handleSubmit}>
           Save Chart
         </button>
       </div>
