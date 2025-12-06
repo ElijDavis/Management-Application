@@ -132,7 +132,7 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/30 z-50" onClick={onClose}>
-      <div className="bg-foreground rounded-lg flex flex-col justify-center items-center text-background w-2/3 h-2/3" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-foreground rounded-lg flex flex-col justify-center items-center text-background w-2/3 h-5/6" onClick={(e) => e.stopPropagation()}>
         <h1 className="text-background text-2xl mb-10">Create New Chart</h1>
 
         {/* File + Name + URL + Chart Type */}
@@ -154,7 +154,7 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
         </div>
 
         {/* X and Y key selection */}
-        <div className="flex flex-col md:flex-row md:space-x-10 w-full mt-5 pl-10 pr-10 pb-5 pt-5">
+        <div className="flex flex-col md:flex-row md:space-x-10 w-full pl-10 pr-10 pb-5 pt-5">
           {/* X key */}
           <div className="flex flex-wrap gap-2 bg-background/10 p-2 rounded-lg w-full md:w-1/2 min-h-[4rem] max-h-[12rem] overflow-y-auto">
             {headers.length > 0 ? headers.map(h => (
@@ -168,21 +168,36 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
 
           {/* Y keys */}
           <div className="flex flex-wrap gap-2 bg-background/10 p-2 rounded-lg w-full md:w-1/2 min-h-[4rem] max-h-[12rem] overflow-y-auto">
-            {headers.length > 0 ? headers.map(h => (
-              <div key={h} className="flex items-center gap-2">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" checked={yKeys.includes(h)} onChange={(e) => {
-                      if (e.target.checked) setYKeys([...yKeys, h]);
-                      else setYKeys(yKeys.filter(key => key !== h));
+            {headers.length > 0 ? headers.map(h => {
+              const selected = yKeys.includes(h);
+              return (
+                <div key={h} className="flex items-center gap-2">
+                  <button
+                    className={`w-fit h-fit rounded-lg px-3 py-1 ${
+                      selected
+                        ? "bg-blue-400"
+                        : "bg-background/20 hover:bg-background/40 active:bg-background/60"
+                    }`}
+                    onClick={() => {
+                      if (selected) {
+                        setYKeys(yKeys.filter(key => key !== h));
+                      } else {
+                        setYKeys([...yKeys, h]);
+                      }
                     }}
-                  />
-                  {h}
-                </label>
-                {yKeys.includes(h) && (
-                  <input type="color" value={colors[h] || "#3b82f6"} onChange={e => setColors({ ...colors, [h]: e.target.value })}/>
-                )}
-              </div>
-            )) : <span className="text-sm text-gray-400">No items available</span>}
+                  >
+                    {h}
+                  </button>
+                  {selected && (
+                    <input
+                      type="color"
+                      value={colors[h] ?? "#3b82f6"}
+                      onChange={e => setColors(prev => ({ ...prev, [h]: e.target.value }))}
+                    />
+                  )}
+                </div>
+              );
+            }) : <span className="text-sm text-gray-400">No items available</span>}
           </div>
         </div>
 
