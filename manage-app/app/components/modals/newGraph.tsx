@@ -192,6 +192,18 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
           <input type="text" value={yAxisTitle} onChange={e => setYAxisTitle(e.target.value)} placeholder="Y-Axis Title (Optional)" className="w-1/2 p-2 bg-background/10 rounded-lg" />
         </div>
 
+        {/* Visible range */}
+        <div className="flex flex-row justify-between space-x-10 w-full pl-10 pr-10 pb-5">
+          <div className="flex flex-col justify-center items-center w-full">
+            <p className="">Start:</p>
+            <input type="number" value={rangeStart} onChange={e => setRangeStart(Number(e.target.value))} placeholder="Visible Range Start (index)" className="w-full p-2 bg-background/10 rounded-lg" />
+          </div>
+          <div className="flex flex-col justify-center items-center w-full">
+            <p className="">End:</p>
+            <input type="number" value={rangeEnd ?? ""} onChange={e => setRangeEnd(e.target.value ? Number(e.target.value) : null)} placeholder="Visible Range End (index or -fraction)" className="w-full p-2 bg-background/10 rounded-lg" />
+          </div>
+        </div>
+
         {/* Legend toggle */}
         <label className="flex items-center gap-2 mt-5">
           <input type="checkbox" checked={showLegend} onChange={e => setShowLegend(e.target.checked)} />
