@@ -1,18 +1,23 @@
+//utils/graph/chartStorage.ts
+
 'use client'
 
 import { ChartData } from "@/lib/data/pipeline";
 import { createClient } from "@supabase/supabase-js";
+import { v4 as uuidv4 } from "uuid"; // install with: npm install uuid
 
 export type ChartDisplayOptions = {
   xAxisTitle?: string;
   yAxisTitle?: string;
-  colors?: Record<string, string>;   // ✅ keyed by dataset label
+  colors?: Record<string, string>;   // keyed by dataset label
   visibleRange?: { start: number; end: number };
   showLegend?: boolean;
 };
 
 export type ChartMeta = {
-  chartType: "bar" | "line" | "pie" | "doughnut" | "area";
+  id: string;                        // ✅ unique identifier
+  name: string;                      // ✅ display name (can have spaces)
+  chartType: "bar" | "line" | "pie" | "doughnut";
   source: string | ChartData;
   xKey: string;
   yKeys: string[];
@@ -48,7 +53,9 @@ export async function getCharts(): Promise<Record<string, ChartMeta>> {
 
   const charts: Record<string, ChartMeta> = {};
   data.forEach((row: any) => {
-    charts[row.name] = {
+    charts[row.id] = {
+      id: row.id,
+      name: row.name,
       chartType: row.chartType,
       source: row.url ?? row.data,
       xKey: row.xKey,
@@ -73,36 +80,39 @@ export async function saveChart(
   xKey: string,
   yKeys: string[],
   options?: ChartDisplayOptions
-) {
+): Promise<ChartMeta> {
   const charts = getLocalCharts();
 
-  if (charts[name]) throw new Error("Chart name must be unique");
+  const id = uuidv4(); // ✅ generate unique ID
 
-  charts[name] = { chartType, source: sourceOrData, xKey, yKeys, options };
+  const newChart: ChartMeta = { id, name, chartType, source: sourceOrData, xKey, yKeys, options };
+  charts[id] = newChart;
   setLocalCharts(charts);
 
-  const payload = { name, chartType, xKey, yKeys, options };
+  const payload = { id, name, chartType, xKey, yKeys, options };
   if (typeof sourceOrData === "string") {
     await supabase.from("charts").insert({ ...payload, url: sourceOrData });
   } else {
     await supabase.from("charts").insert({ ...payload, data: sourceOrData });
   }
+
+  return newChart;
 }
 
-export async function updateChart(name: string, partial: Partial<ChartMeta>) {
+export async function updateChart(id: string, partial: Partial<ChartMeta>) {
   const charts = getLocalCharts();
-  if (!charts[name]) throw new Error("Chart not found");
-  charts[name] = { ...charts[name], ...partial };
+  if (!charts[id]) throw new Error("Chart not found");
+  charts[id] = { ...charts[id], ...partial };
   setLocalCharts(charts);
 
-  const { error } = await supabase.from("charts").update(partial).eq("name", name);
+  const { error } = await supabase.from("charts").update(partial).eq("id", id);
   if (error) throw error;
 }
 
-export async function deleteChart(name: string) {
+export async function deleteChart(id: string) {
   const charts = getLocalCharts();
-  delete charts[name];
+  delete charts[id];
   setLocalCharts(charts);
-  const { error } = await supabase.from("charts").delete().eq("name", name);
+  const { error } = await supabase.from("charts").delete().eq("id", id);
   if (error) throw error;
 }

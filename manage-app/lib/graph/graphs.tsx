@@ -32,7 +32,7 @@ Chart.register(
 );
 
 interface ChartRendererProps {
-  chartType: "bar" | "line" | "pie";
+  chartType: "bar" | "line" | "pie" | "doughnut";
   source: string | ChartData;
   xKey: string;
   yKeys: string[];
@@ -68,7 +68,7 @@ const applyOptions = (data: ChartData, options?: ChartDisplayOptions): ChartData
   return sliced;
 };
 
-const makeChartJsOptions = (type: "bar" | "line" | "pie", options?: ChartDisplayOptions) => {
+const makeChartJsOptions = (type: "bar" | "line" | "pie" | "doughnut", options?: ChartDisplayOptions) => {
   const base = {
     maintainAspectRatio: false,
     animation: false,

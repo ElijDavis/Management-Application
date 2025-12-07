@@ -39,20 +39,7 @@ export default function CreateChart({ onClose, onChartSaved }: { onClose: () => 
   const [rangeEnd, setRangeEnd] = useState<number | null>(null);
   const [showLegend, setShowLegend] = useState(true);
 
-  const chartTypeOptions = ["bar", "line", "pie", "doughnut", "area"];
-
-  /*useEffect(() => {
-    setColors(prev => {
-      const next = [...prev];
-      if (yKeys.length > next.length) {
-        // add defaults
-        for (let i = next.length; i < yKeys.length; i++) next.push("#3b82f6");
-      } else if (yKeys.length < next.length) {
-        next.length = yKeys.length;
-      }
-      return next;
-    });
-  }, [yKeys]);*/
+  const chartTypeOptions = ["bar", "line", "pie", "doughnut"];
 
   function isDateValue(val: any): boolean {
     if (typeof val !== "string") return false;

@@ -1,33 +1,36 @@
 //dashboard/page.tsx
 'use client'
 
-import {useEffect, useState } from "react";
-import { getCharts, deleteChart } from "@/utils/graph/chartStorage";
+import { useEffect, useState } from "react";
+import { getCharts, deleteChart, ChartMeta } from "@/utils/graph/chartStorage";
 import Tile from "../components/Tile";
 import { ChartRenderer } from "@/lib/graph/graphs";
 import CreateChart from "../components/modals/newGraph";
 import EditGraph from "../components/modals/editGraph";
 import Image from "next/image";
 
-const dashboard = () => {
-  const [charts, setCharts] = useState<Record<string, any>>({});
+const Dashboard = () => {
+  const [charts, setCharts] = useState<Record<string, ChartMeta>>({});
   const [showCreateChart, setShowCreateChart] = useState(false);
   const [showEditChart, setShowEditChart] = useState(false);
-  //Track which chart is being edited
-  const [selectedChartName, setSelectedChartName] = useState<string>("");
-  const [selectedChartMeta, setSelectedChartMeta] = useState<any | null>(null);
+  const [selectedChartId, setSelectedChartId] = useState<string>("");
+  const [selectedChartMeta, setSelectedChartMeta] = useState<ChartMeta | null>(null);
 
+  // Load charts once on mount
+  useEffect(() => {
+    getCharts().then(setCharts).catch(console.error);
+  }, []);
 
   const handleClick = () => {
     setShowCreateChart(true);
   };
 
-  const handleDelete = async (name: string) => {
+  const handleDelete = async (id: string) => {
     try {
-      await deleteChart(name);
+      await deleteChart(id);
       setCharts((prev) => {
         const updated = { ...prev };
-        delete updated[name];
+        delete updated[id];
         return updated;
       });
     } catch (err) {
@@ -35,38 +38,44 @@ const dashboard = () => {
     }
   };
 
-  const handleEdit = (name: string, chartMeta: any) => {
-    //alert("Edit functionality coming soon!");
-    setSelectedChartName(name);
+  const handleEdit = (id: string, chartMeta: ChartMeta) => {
+    setSelectedChartId(id);
     setSelectedChartMeta(chartMeta);
     setShowEditChart(true);
   };
 
-
-  useEffect(() => {
-    getCharts().then(setCharts).catch(console.error);
-  }, []);
-
-  return(
+  return (
     <div className="w-full">
-      <div className="flex justify-end mr-36 mt-15 gap-2">{/* Make the New button dynamic because right now it is out of place */}
+      {/* Add New Chart Button */}
+      <div className="flex justify-end mr-36 mt-15 gap-2">
         <button className="bg-foreground/50 aspect-square pl-2 pr-2 text-2xl hover:bg-foreground/10 active:bg-foreground rounded-xl" onClick={handleClick}>
           <Image src="/images/Plus.svg" alt="Add New Chart" width={24} height={24} />
         </button>
       </div>
+
+      {/* Chart Tiles */}
       <div className="m-4 grid grid-cols-4 gap-4 grid-flow-dense">
-        {Object.entries(charts).map(([name, chartMeta]) => {
-          const {chartType, source, xKey, yKeys, options} = chartMeta;
+        {Object.entries(charts).map(([id, chartMeta]) => {
+          const { name, chartType, source, xKey, yKeys, options } = chartMeta;
           return (
-          <Tile key={name} chartType={chartType} href={`/dashboard/${name}`} name={name.toUpperCase()} onDelete={() => handleDelete(name)} onEdit={() => handleEdit(name, chartMeta)}>
-            <ChartRenderer chartType={chartType} source={source} xKey={xKey} yKeys={Array.isArray(yKeys) ? yKeys : [yKeys]} datasetLabels={Array.isArray(yKeys) ? yKeys : [yKeys]} options={options} />
-          </Tile>
-          )
+            <Tile key={id} chartType={chartType} href={`/dashboard/${id}`} name={name.toUpperCase()} onDelete={() => handleDelete(id)} onEdit={() => handleEdit(id, chartMeta)} >
+              <ChartRenderer chartType={chartType} source={source} xKey={xKey} yKeys={Array.isArray(yKeys) ? yKeys : [yKeys]} datasetLabels={Array.isArray(yKeys) ? yKeys : [yKeys]} options={options} />
+            </Tile>
+          );
         })}
       </div>
-      {showCreateChart && <CreateChart onChartSaved={(newChart) => { setCharts(prev => ({ ...prev, [newChart.name]: newChart }));}} onClose={() => setShowCreateChart(false)} />}
-      {showEditChart && <EditGraph name={selectedChartName} chartMeta={selectedChartMeta} onClose={() => setShowEditChart(false)} />}
+
+      {/* Create Chart Modal */}
+      {showCreateChart && (
+        <CreateChart onChartSaved={(newChart) => { setCharts(prev => ({ ...prev, [newChart.id]: newChart })); }} onClose={() => setShowCreateChart(false)}/>
+)}
+
+      {/* Edit Chart Modal */}
+      {showEditChart && selectedChartMeta && (
+        <EditGraph name={selectedChartMeta.name} chartMeta={selectedChartMeta} onClose={() => setShowEditChart(false)} />
+      )}
     </div>
-  )
-}
-export default dashboard;
+  );
+};
+
+export default Dashboard;
