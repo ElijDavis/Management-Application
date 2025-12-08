@@ -43,7 +43,7 @@ interface ChartRendererProps {
 }
 
 // Apply options including colors keyed by dataset label
-const applyOptions = (data: ChartData, options?: ChartDisplayOptions): ChartData => {
+/*const applyOptions = (data: ChartData, options?: ChartDisplayOptions): ChartData => {
   if (!options) return data;
   const total = data.labels.length;
   let start = Math.max(0, options.visibleRange?.start ?? 0);
@@ -68,9 +68,42 @@ const applyOptions = (data: ChartData, options?: ChartDisplayOptions): ChartData
     }),
   };
   return sliced;
+};*/
+
+const applyOptions = (data: ChartData, options?: ChartDisplayOptions): ChartData => {
+  if (!options) return data;
+  const total = data.labels.length;
+  let start = Math.max(0, options.visibleRange?.start ?? 0);
+  let end = options.visibleRange?.end ?? Number.MAX_SAFE_INTEGER;
+  if (end < 0) {
+    const fraction = Math.max(0.0, Math.min(1.0, Math.abs(end)));
+    end = Math.floor(start + fraction * (total - start));
+  } else {
+    end = Math.min(end, total);
+  }
+  const slice = (arr: any[]) => arr.slice(start, end);
+
+  const scale = options.scale ?? 1;
+
+  const sliced: ChartData = {
+    labels: slice(data.labels),
+    datasets: data.datasets.map((ds) => {
+      const color = options.colors?.[ds.label] || "#3b82f6";
+      return {
+        ...ds,
+        data: slice(ds.data).map((val) =>
+          val != null ? val * scale : null
+        ),
+        backgroundColor: color,
+        borderColor: color,
+      };
+    }),
+  };
+  return sliced;
 };
 
-const makeChartJsOptions = (type: "bar" | "line" | "pie" | "doughnut", options?: ChartDisplayOptions) => {
+
+/*const makeChartJsOptions = (type: "bar" | "line" | "pie" | "doughnut", options?: ChartDisplayOptions) => {
   const base = {
     maintainAspectRatio: false,
     animation: false,
@@ -97,7 +130,46 @@ const makeChartJsOptions = (type: "bar" | "line" | "pie" | "doughnut", options?:
     },
   };
   return base;
+};*/
+
+const makeChartJsOptions = (
+  type: "bar" | "line" | "pie" | "doughnut",
+  options?: ChartDisplayOptions
+) => {
+  const base: any = {
+    maintainAspectRatio: false,
+    animation: false,
+    plugins: {
+      legend: { display: options?.showLegend ?? type !== "bar" },
+      tooltip: { enabled: true },
+    },
+  };
+
+  if (type === "pie" || type === "doughnut") return base;
+
+  base.scales = {
+    x: {
+      title: {
+        display: !!options?.xAxisTitle,
+        text: options?.xAxisTitle,
+      },
+    },
+    y: {
+      title: {
+        display: !!options?.yAxisTitle,
+        text: options?.yAxisTitle,
+      },
+      ticks: {
+        callback: (value: number) => {
+          const scale = options?.scale ?? 1;
+          return value * scale; // ✅ rescale tick labels
+        },
+      },
+    },
+  };
+  return base;
 };
+
 
 export const ChartRenderer = ({ chartType, source, xKey, yKeys, datasetLabels, options }: ChartRendererProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);

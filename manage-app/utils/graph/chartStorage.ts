@@ -12,6 +12,7 @@ export type ChartDisplayOptions = {
   colors?: Record<string, string>;   // keyed by dataset label
   visibleRange?: { start: number; end: number };
   showLegend?: boolean;
+  scale?: number; 
 };
 
 export type ChartMeta = {
@@ -103,7 +104,7 @@ export async function saveChart(
 
   if (insertResult.error) {
     console.error("❌ Supabase insert error:", insertResult.error.message, insertResult.error.details);
-    throw insertResult.error;
+    throw new Error(insertResult.error.message); // ✅ proper Error
   } else {
     console.log("✅ Supabase insert success:", insertResult.data);
   }
@@ -111,9 +112,11 @@ export async function saveChart(
   return newChart;
 }
 
-
-
 export async function updateChart(id: string, partial: Partial<ChartMeta>) {
+    if (!id) {
+      throw new Error("updateChart called without a valid id");
+    }
+
   const charts = getLocalCharts();
   if (!charts[id]) throw new Error("Chart not found");
 
@@ -127,7 +130,12 @@ export async function updateChart(id: string, partial: Partial<ChartMeta>) {
     .eq("id", id)
     .eq("user_id", user_id); // enforce ownership
 
-  if (error) throw error;
+  //if (error) throw error;
+  if (error) {
+    console.error("❌ Supabase update error:", error.message, error.details);
+    throw new Error(error.message);
+  }
+
 
   charts[id] = { ...charts[id], ...partial };
   setLocalCharts(charts);
