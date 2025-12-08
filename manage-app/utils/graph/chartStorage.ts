@@ -52,11 +52,12 @@ export async function getCharts(): Promise<Record<string, ChartMeta>> {
     charts[row.id] = {
       id: row.id,
       name: row.name,
-      chartType: row.chartType,
+      // ✅ handle both camelCase and lowercase column names
+      chartType: row.chartType ?? row.charttype,
       source: row.url ?? row.data,
-      xKey: row.xKey,
-      yKeys: Array.isArray(row.yKeys)
-        ? row.yKeys
+      xKey: row.xKey ?? row.xkey,
+      yKeys: Array.isArray(row.yKeys ?? row.ykeys)
+        ? (row.yKeys ?? row.ykeys)
         : typeof row.yKey === "string"
         ? row.yKey.split(",").map((s: string) => s.trim())
         : [],
@@ -115,12 +116,23 @@ export async function saveChart(
 export async function updateChart(id: string, partial: Partial<ChartMeta>) {
   const charts = getLocalCharts();
   if (!charts[id]) throw new Error("Chart not found");
+
+  // ✅ include user_id for RLS
+  const { data: userData } = await supabase.auth.getUser();
+  const user_id = userData?.user?.id;
+
+  const { error } = await supabase
+    .from("charts")
+    .update({ ...partial, user_id })
+    .eq("id", id)
+    .eq("user_id", user_id); // enforce ownership
+
+  if (error) throw error;
+
   charts[id] = { ...charts[id], ...partial };
   setLocalCharts(charts);
-
-  const { error } = await supabase.from("charts").update(partial).eq("id", id);
-  if (error) throw error;
 }
+
 
 export async function deleteChart(id: string) {
   const charts = getLocalCharts();
