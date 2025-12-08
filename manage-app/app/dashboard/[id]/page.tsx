@@ -74,7 +74,7 @@ export default function Visual() {
     <div className="flex flex-col items-center justify-center p-6 m-10">
       <h1 className="text-2xl font-bold">Dashboard Tile: {name}</h1>
       <ChartRenderer chartType={chartType} source={source} xKey={xKey} yKeys={Array.isArray(yKeys) ? yKeys : [yKeys]} datasetLabels={Array.isArray(yKeys) ? yKeys : [yKeys]} options={{...options, visibleRange: { start: rangeStart, end: rangeEnd }, scale }}/>
-      <div className="rounded bg-foreground/10 p-2 mb-10" onClick={() => (setShowSlider(!showSlider))}>Show Slider</div>
+      <div className="rounded bg-foreground/20 p-2 mb-10 hover:bg-foreground/10 active:bg-foreground/20" onClick={() => (setShowSlider(!showSlider))}>Show Slider</div>
       {/* Controls */}
       {showSlider && (
         <div className="flex flex-col items-center w-full">

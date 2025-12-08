@@ -207,7 +207,7 @@ export const ChartRenderer = ({ chartType, source, xKey, yKeys, datasetLabels, o
 
   return (
     <div className="w-full p-10">
-      <canvas className="w-full h-64" ref={canvasRef}></canvas>
+      <canvas className="w-full h-fit" ref={canvasRef}></canvas>
     </div>
   );
 };
