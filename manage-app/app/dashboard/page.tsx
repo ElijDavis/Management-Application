@@ -58,7 +58,7 @@ const Dashboard = () => {
         {Object.entries(charts).map(([id, chartMeta]) => {
           const { name, chartType, source, xKey, yKeys, options } = chartMeta;
           return (
-            <Tile key={id} chartType={chartType} href={`/dashboard/${id}`} name={name.toUpperCase()} onDelete={() => handleDelete(id)} onEdit={() => handleEdit(id, chartMeta)} >
+            <Tile key={id} chartType={chartType} href={`/dashboard/${id}`} name={name ? name.toUpperCase() : ""} onDelete={() => handleDelete(id)} onEdit={() => handleEdit(id, chartMeta)} >
               <ChartRenderer chartType={chartType} source={source} xKey={xKey} yKeys={Array.isArray(yKeys) ? yKeys : [yKeys]} datasetLabels={Array.isArray(yKeys) ? yKeys : [yKeys]} options={options} />
             </Tile>
           );
