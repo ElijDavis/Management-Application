@@ -73,7 +73,7 @@ export async function getCharts(): Promise<Record<string, ChartMeta>> {
   return charts;
 }
 
-export async function saveChart(
+/*export async function saveChart(
   name: string,
   chartType: ChartMeta["chartType"],
   sourceOrData: string | ChartData,
@@ -97,7 +97,43 @@ export async function saveChart(
   }
 
   return newChart;
+}*/
+
+export async function saveChart(
+  name: string,
+  chartType: ChartMeta["chartType"],
+  sourceOrData: string | ChartData,
+  xKey: string,
+  yKeys: string[],
+  options?: ChartDisplayOptions
+): Promise<ChartMeta> {
+  const charts = getLocalCharts();
+
+  const id = uuidv4(); // ✅ generate unique ID
+
+  const newChart: ChartMeta = { id, name, chartType, source: sourceOrData, xKey, yKeys, options };
+  charts[id] = newChart;
+  setLocalCharts(charts);
+
+  const payload = { id, name, chartType, xKey, yKeys, options };
+
+  let insertResult;
+  if (typeof sourceOrData === "string") {
+    insertResult = await supabase.from("charts").insert({ ...payload, url: sourceOrData });
+  } else {
+    insertResult = await supabase.from("charts").insert({ ...payload, data: sourceOrData });
+  }
+
+  if (insertResult.error) {
+    console.error("❌ Supabase insert error:", insertResult.error.message, insertResult.error.details);
+    throw insertResult.error;
+  } else {
+    console.log("✅ Supabase insert success:", insertResult.data);
+  }
+
+  return newChart;
 }
+
 
 export async function updateChart(id: string, partial: Partial<ChartMeta>) {
   const charts = getLocalCharts();
