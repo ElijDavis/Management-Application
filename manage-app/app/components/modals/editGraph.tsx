@@ -1,3 +1,5 @@
+//components/modals/editGraph.tsx
+
 'use client'
 
 import Toast from "../toast";
@@ -5,12 +7,13 @@ import { useState } from "react";
 import { ChartDisplayOptions, ChartMeta, updateChart } from "@/utils/graph/chartStorage";
 
 interface EditGraphProps {
-  name: string;
+  id: string;            // ✅ use id for updates
   chartMeta: ChartMeta;
   onClose: () => void;
+  onSave?: (updatedMeta: ChartMeta) => void; // ✅ new prop
 }
 
-const EditGraph = ({ name, chartMeta, onClose }: EditGraphProps) => {
+const EditGraph = ({ id, chartMeta, onClose, onSave }: EditGraphProps) => {
   const [xAxisTitle, setXAxisTitle] = useState(chartMeta.options?.xAxisTitle || chartMeta.xKey);
   const [yAxisTitle, setYAxisTitle] = useState(chartMeta.options?.yAxisTitle || chartMeta.yKeys.join(", "));
   const [colors, setColors] = useState<Record<string, string>>(chartMeta.options?.colors || {});
@@ -32,7 +35,9 @@ const EditGraph = ({ name, chartMeta, onClose }: EditGraphProps) => {
       showLegend,
     };
     try {
-      await updateChart(name, { options: updatedOptions });
+      const updatedMeta: ChartMeta = { ...chartMeta, options: updatedOptions };
+      await updateChart(id, { options: updatedOptions }); // ✅ use id here
+      if (onSave) onSave(updatedMeta); // ✅ push update to parent
       setShowToast(true);
       onClose();
     } catch (err) {
@@ -42,61 +47,46 @@ const EditGraph = ({ name, chartMeta, onClose }: EditGraphProps) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-foreground rounded-lg flex flex-col justify-center items-center text-background w-2/3 h-2/3"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h1 className="text-background text-2xl mb-10">Edit Chart - {name}</h1>
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50" onClick={onClose}>
+      <div className="bg-foreground rounded-lg flex flex-col justify-center items-center text-background w-2/3 h-2/3" onClick={(e) => e.stopPropagation()}>
+        <h1 className="text-background text-2xl mb-10">Edit Chart - {chartMeta.name}</h1>
 
-        <label>X Axis Title</label>
-        <input value={xAxisTitle} onChange={e => setXAxisTitle(e.target.value)} />
+        {/* Axis Titles */}
+        <div className="flex flex-row gap-4">
+          {/* Form Fields */}
+          <label>X Axis Title</label>
+          <input className="shadow-inner shadow-black/20 p-2 rounded" value={xAxisTitle} onChange={e => setXAxisTitle(e.target.value)} />
+          {/* Y Axis Title */}
+          <label>Y Axis Title</label>
+          <input className="shadow-inner shadow-black/20 p-2 rounded" value={yAxisTitle} onChange={e => setYAxisTitle(e.target.value)} /> 
+        </div>
 
-        <label>Y Axis Title</label>
-        <input value={yAxisTitle} onChange={e => setYAxisTitle(e.target.value)} />
+        {/* Colors */}
+        <div className="w-full px-2 flex justify-center">
+          {/* ✅ Only allow color pickers for Y-axis datasets */}
+          {chartMeta.yKeys.map((yk) => (
+            <div key={yk} className="flex items-center gap-2 mt-2 bg-background/20 p-2 rounded w-fit">
+              <span>{yk}</span>
+              <input type="color" value={colors[yk] || "#3b82f6"} onChange={e => setColors({ ...colors, [yk]: e.target.value })}/>
+            </div>
+          ))}
+        </div>
 
-        {/* ✅ Only allow color pickers for Y-axis datasets */}
-        {chartMeta.yKeys.map((yk) => (
-          <div key={yk} className="flex items-center gap-2 mt-2">
-            <span>{yk}</span>
-            <input
-              type="color"
-              value={colors[yk] || "#3b82f6"}
-              onChange={e => setColors({ ...colors, [yk]: e.target.value })}
-            />
-          </div>
-        ))}
+        {/* Visible Range */}
+        <div className="flex items-center gap-2 mt-4 ">
+          <label className="">Visible Range:</label>
+          <input className="shadow-inner shadow-black/20 p-2 rounded" type="number" value={rangeStart} onChange={e => setRangeStart(Number(e.target.value))}/>
+          <input className="shadow-inner shadow-black/20 p-2 rounded" type="number" value={rangeEnd} onChange={e => setRangeEnd(Number(e.target.value))}/>
+        </div>
+ 
 
-        <label className="mt-4">Visible Range</label>
-        <input
-          type="number"
-          value={rangeStart}
-          onChange={e => setRangeStart(Number(e.target.value))}
-        />
-        <input
-          type="number"
-          value={rangeEnd}
-          onChange={e => setRangeEnd(Number(e.target.value))}
-        />
-
+        {/* Show Legend */}
         <label className="mt-4 flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={showLegend}
-            onChange={e => setShowLegend(e.target.checked)}
-          />
+          <input type="checkbox" checked={showLegend} onChange={e => setShowLegend(e.target.checked)}/>
           Show Legend
         </label>
-
-        <button
-          onClick={handleSave}
-          className="mt-10 bg-background text-foreground px-4 py-2 rounded-md hover:bg-background/80"
-        >
-          Save Changes
-        </button>
+        {/* Save Button */}
+        <button onClick={handleSave} className="mt-10 bg-background text-foreground px-4 py-2 rounded-md hover:bg-background/80">Save Changes</button>
       </div>
       {showToast && (
         <Toast message="Chart updated successfully!" onClose={() => setShowToast(false)} />

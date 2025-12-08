@@ -1,3 +1,5 @@
+// manage-app/lib/graph/graphs.tsx
+
 import { useEffect, useRef } from "react";
 import { loadChartData, ChartData } from "../data/pipeline";
 import {

@@ -72,7 +72,7 @@ const Dashboard = () => {
 
       {/* Edit Chart Modal */}
       {showEditChart && selectedChartMeta && (
-        <EditGraph name={selectedChartMeta.name} chartMeta={selectedChartMeta} onClose={() => setShowEditChart(false)} />
+        <EditGraph id={selectedChartId} chartMeta={selectedChartMeta} onClose={() => setShowEditChart(false)} onSave={(updatedMeta) => { setCharts(prev => ({ ...prev, [selectedChartId]: updatedMeta })); }} />
       )}
     </div>
   );
