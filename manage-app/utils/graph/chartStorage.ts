@@ -3,7 +3,7 @@
 'use client'
 
 import { ChartData } from "@/lib/data/pipeline";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabaseClient";
 import { v4 as uuidv4 } from "uuid"; // install with: npm install uuid
 
 export type ChartDisplayOptions = {
@@ -25,10 +25,6 @@ export type ChartMeta = {
 };
 
 const STORAGE_KEY = "graphs";
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 // --- Local Helpers ---
 function getLocalCharts(): Record<string, ChartMeta> {
@@ -72,32 +68,6 @@ export async function getCharts(): Promise<Record<string, ChartMeta>> {
   setLocalCharts(charts);
   return charts;
 }
-
-/*export async function saveChart(
-  name: string,
-  chartType: ChartMeta["chartType"],
-  sourceOrData: string | ChartData,
-  xKey: string,
-  yKeys: string[],
-  options?: ChartDisplayOptions
-): Promise<ChartMeta> {
-  const charts = getLocalCharts();
-
-  const id = uuidv4(); // ✅ generate unique ID
-
-  const newChart: ChartMeta = { id, name, chartType, source: sourceOrData, xKey, yKeys, options };
-  charts[id] = newChart;
-  setLocalCharts(charts);
-
-  const payload = { id, name, chartType, xKey, yKeys, options };
-  if (typeof sourceOrData === "string") {
-    await supabase.from("charts").insert({ ...payload, url: sourceOrData });
-  } else {
-    await supabase.from("charts").insert({ ...payload, data: sourceOrData });
-  }
-
-  return newChart;
-}*/
 
 export async function saveChart(
   name: string,
