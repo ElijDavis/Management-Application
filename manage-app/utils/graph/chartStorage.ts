@@ -108,14 +108,20 @@ export async function saveChart(
   options?: ChartDisplayOptions
 ): Promise<ChartMeta> {
   const charts = getLocalCharts();
-
-  const id = uuidv4(); // ✅ generate unique ID
+  const id = uuidv4();
 
   const newChart: ChartMeta = { id, name, chartType, source: sourceOrData, xKey, yKeys, options };
   charts[id] = newChart;
   setLocalCharts(charts);
 
-  const payload = { id, name, chartType, xKey, yKeys, options };
+  // ✅ get current user
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData?.user) {
+    throw new Error("No authenticated user found");
+  }
+  const user_id = userData.user.id;
+
+  const payload = { id, name, chartType, xKey, yKeys, options, user_id };
 
   let insertResult;
   if (typeof sourceOrData === "string") {
@@ -133,6 +139,7 @@ export async function saveChart(
 
   return newChart;
 }
+
 
 
 export async function updateChart(id: string, partial: Partial<ChartMeta>) {
