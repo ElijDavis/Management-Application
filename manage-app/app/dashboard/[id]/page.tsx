@@ -55,27 +55,6 @@ export default function Visual() {
       return () => {
         supabase.removeChannel(channel); //cleanup on unmount
       }
-    /*const load = async () => {
-      try {
-        const charts = await refreshCharts(); // ✅ always pulls from Supabase
-        const meta = charts[chartId] || null;
-        setChartMeta(meta);
-
-        if (meta?.options?.visibleRange) {
-          setRangeStart(meta.options.visibleRange.start);
-          setRangeEnd(meta.options.visibleRange.end);
-        } else if (meta && typeof meta.source !== "string") {
-          setRangeEnd(meta.source.labels.length);
-        }
-
-        if (meta?.options?.scale !== undefined) {
-          setScale(meta.options.scale);
-        }
-      } catch (err) {
-        console.error("Failed to load chart:", err);
-      }
-    };
-    if (chartId) load();*/
   }, [chartId]);
 
   const handleScaleChange = async (newScale: number) => {
