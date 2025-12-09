@@ -39,7 +39,7 @@ function setLocalCharts(charts: Record<string, ChartMeta>) {
 }
 
 // --- Public API ---
-export async function getCharts(): Promise<Record<string, ChartMeta>> {
+/*export async function getCharts(): Promise<Record<string, ChartMeta>> {
   // 1. Try local first
   const local = getLocalCharts();
   if (Object.keys(local).length > 0) return local;
@@ -69,7 +69,44 @@ export async function getCharts(): Promise<Record<string, ChartMeta>> {
   // Cache locally
   setLocalCharts(charts);
   return charts;
+}*/
+
+export async function getCharts(): Promise<Record<string, ChartMeta>> {
+  // 1. Try local first
+  const local = getLocalCharts();
+  if (Object.keys(local).length > 0) return local;
+
+  // 2. If local is empty, fall back to Supabase
+  return await refreshCharts();
 }
+
+// --- Always fetch fresh charts from Supabase ---
+export async function refreshCharts(): Promise<Record<string, ChartMeta>> {
+  const { data, error } = await supabase.from("charts").select("*");
+  if (error) throw error;
+
+  const charts: Record<string, ChartMeta> = {};
+  data.forEach((row: any) => {
+    charts[row.id] = {
+      id: row.id,
+      name: row.name,
+      chartType: row.chartType ?? row.charttype,
+      source: row.url ?? row.data,
+      xKey: row.xKey ?? row.xkey,
+      yKeys: Array.isArray(row.yKeys ?? row.ykeys)
+        ? (row.yKeys ?? row.ykeys)
+        : typeof row.yKey === "string"
+        ? row.yKey.split(",").map((s: string) => s.trim())
+        : [],
+      options: row.options ?? {},
+    };
+  });
+
+  // ✅ overwrite local cache with fresh data
+  setLocalCharts(charts);
+  return charts;
+}
+
 
 export async function saveChart(
   name: string,
@@ -135,7 +172,6 @@ export async function updateChart(id: string, partial: Partial<ChartMeta>) {
     console.error("❌ Supabase update error:", error.message, error.details);
     throw new Error(error.message);
   }
-
 
   charts[id] = { ...charts[id], ...partial };
   setLocalCharts(charts);
