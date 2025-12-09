@@ -6,6 +6,7 @@ import { ChartRenderer } from "@/lib/graph/graphs";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { refreshCharts, updateChart, ChartMeta } from "@/utils/graph/chartStorage";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Visual() {
   const params = useParams();
@@ -20,7 +21,41 @@ export default function Visual() {
 
   // Always fetch fresh chart data from Supabase/localStorage
   useEffect(() => {
-    const load = async () => {
+    if (!chartId) return;
+    const channel = supabase
+      .channel("charts-changes")
+      .on("postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "charts",
+          filter: `id=eq.${chartId}`,
+        },
+        async (payload) => {
+          console.log("Realtime change: ", payload);
+          // Refresh chart data on any change
+          const charts = await refreshCharts(); // ✅ always pulls from Supabase
+          const meta = charts[chartId] || null;
+          setChartMeta(meta);
+
+          if (meta?.options?.visibleRange) {
+            setRangeStart(meta.options.visibleRange.start);
+            setRangeEnd(meta.options.visibleRange.end);
+          } else if (meta && typeof meta.source !== "string") {
+            setRangeEnd(meta.source.labels.length);
+          }
+
+          if (meta?.options?.scale !== undefined) {
+            setScale(meta.options.scale);
+          }
+        }
+      )
+      .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel); //cleanup on unmount
+      }
+    /*const load = async () => {
       try {
         const charts = await refreshCharts(); // ✅ always pulls from Supabase
         const meta = charts[chartId] || null;
@@ -40,7 +75,7 @@ export default function Visual() {
         console.error("Failed to load chart:", err);
       }
     };
-    if (chartId) load();
+    if (chartId) load();*/
   }, [chartId]);
 
   const handleScaleChange = async (newScale: number) => {
