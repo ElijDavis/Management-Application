@@ -17,6 +17,7 @@ export default function Visual() {
   const [scale, setScale] = useState(1); // multiplier for Y-axis
   const [rangeStart, setRangeStart] = useState(0);
   const [rangeEnd, setRangeEnd] = useState(0);
+  const [step, setStep] = useState(10);
   // Show slider state can be added later
   const [showSlider, setShowSlider] = useState(false);
 
@@ -31,6 +32,14 @@ export default function Visual() {
       })
       .catch(console.error);
   }, [chartId]);
+
+  useEffect(() => {
+    if (!chartMeta) return;
+    const meta = chartMeta;
+    meta.options?.visibleRange?.start !== undefined && setRangeStart(meta.options.visibleRange.start);
+    meta.options?.visibleRange?.end !== undefined && setRangeEnd(meta.options.visibleRange.end);
+    meta.options?.scale !== undefined && setScale(meta.options.scale);
+  }, []);
 
   const handleScaleChange = async (newScale: number) => {
     setScale(newScale);
@@ -85,13 +94,19 @@ export default function Visual() {
           </div>
           {/* Edit Control + Range Slider */}
           <div className="flex flex-col mt-6 items-center bg-foreground/10 pb-20 p-2 rounded-lg w-1/2 shadow-xl shadow-foreground/10">
-            <label className="mb-20">Visible Range: {rangeStart} - {rangeEnd}</label>
+            <div className="flex flex-col mb-20 items-center">
+              <label className="">Visible Range: {rangeStart} - {rangeEnd}</label>
+              <div>
+                <label>Step:</label>
+                <input type="number" className="w-16 text-center" value={step} min={rangeStart} max={rangeEnd} onChange={(e) => setStep(Number(e.target.value))} /> 
+              </div>
+            </div>
             <div className="flex flex-row items-center justify-center space-x-4">
               <input className="rotate-90" type="range" min={0} max={typeof source !== "string" ? source.labels.length : 100} value={rangeStart} onChange={(e) => handleRangeChange(Number(e.target.value), rangeEnd)} />
-              <input type="number" className="w-16 text-center" value={rangeStart} onChange={(e) => handleRangeChange(Number(e.target.value), rangeEnd)} />
+              <input type="number" className="w-16 text-center" step={step} value={rangeStart} onChange={(e) => handleRangeChange(Number(e.target.value), rangeEnd)} />
               <span className="mx-2"> to </span>
               <input type="number" className="w-16 text-center" value={rangeEnd} onChange={(e) => handleRangeChange(rangeStart, Number(e.target.value))} />
-              <input className="rotate-90" type="range" min={rangeStart} max={typeof source !== "string" ? source.labels.length : 100} value={rangeEnd} onChange={(e) => handleRangeChange(rangeStart, Number(e.target.value))} />
+              <input className="rotate-90" type="range" step={step} min={rangeStart} max={typeof source !== "string" ? source.labels.length : 100} value={rangeEnd} onChange={(e) => handleRangeChange(rangeStart, Number(e.target.value))} />
             </div>
           </div>
         </div>
