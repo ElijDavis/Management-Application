@@ -39,7 +39,7 @@ function setLocalCharts(charts: Record<string, ChartMeta>) {
 }
 
 // --- Public API ---
-/*export async function getCharts(): Promise<Record<string, ChartMeta>> {
+export async function getCharts(): Promise<Record<string, ChartMeta>> {
   // 1. Try local first
   const local = getLocalCharts();
   if (Object.keys(local).length > 0) return local;
@@ -69,16 +69,16 @@ function setLocalCharts(charts: Record<string, ChartMeta>) {
   // Cache locally
   setLocalCharts(charts);
   return charts;
-}*/
+}
 
-export async function getCharts(): Promise<Record<string, ChartMeta>> {
+/*export async function getCharts(): Promise<Record<string, ChartMeta>> {
   // 1. Try local first
   const local = getLocalCharts();
   if (Object.keys(local).length > 0) return local;
 
   // 2. If local is empty, fall back to Supabase
   return await refreshCharts();
-}
+}*/
 
 // --- Always fetch fresh charts from Supabase ---
 export async function refreshCharts(): Promise<Record<string, ChartMeta>> {
