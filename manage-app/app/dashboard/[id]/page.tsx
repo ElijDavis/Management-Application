@@ -5,7 +5,7 @@
 import { ChartRenderer } from "@/lib/graph/graphs";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { refreshCharts, updateChart, ChartMeta } from "@/utils/graph/chartStorage";
+import { refreshCharts, updateChart, ChartMeta, getCharts } from "@/utils/graph/chartStorage";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function Visual() {
@@ -22,7 +22,7 @@ export default function Visual() {
   // Always fetch fresh chart data from Supabase/localStorage
   useEffect(() => {
     if (!chartId) return;
-    const channel = supabase
+    /*const channel = supabase
       .channel("charts-changes")
       .on("postgres_changes",
         {
@@ -52,10 +52,23 @@ export default function Visual() {
       )
       .subscribe();
 
+
       return () => {
         supabase.removeChannel(channel); //cleanup on unmount
-      }
+      }*/
+      
+      getCharts()
+      .then((charts) => {
+        const meta = charts[chartId] || null;
+        setChartMeta(meta);
+        if (meta && typeof meta.source !== "string") {
+          setRangeEnd(meta.source.labels.length);
+        }
+      })
+      .catch(console.error);
   }, [chartId]);
+
+
 
   const handleScaleChange = async (newScale: number) => {
     setScale(newScale);
