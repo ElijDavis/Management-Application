@@ -57,15 +57,15 @@ export default function Visual() {
         supabase.removeChannel(channel); //cleanup on unmount
       }*/
       
-      getCharts()
-      .then((charts) => {
-        const meta = charts[chartId] || null;
-        setChartMeta(meta);
-        if (meta && typeof meta.source !== "string") {
-          setRangeEnd(meta.source.labels.length);
-        }
-      })
-      .catch(console.error);
+    getCharts()
+    .then((charts) => {
+      const meta = charts[chartId] || null;
+      setChartMeta(meta);
+      if (meta && typeof meta.source !== "string") {
+        setRangeEnd(meta.source.labels.length);
+      }
+    })
+    .catch(console.error);
   }, [chartId]);
 
 
